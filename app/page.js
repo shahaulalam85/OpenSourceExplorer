@@ -1,69 +1,144 @@
-import Image from "next/image";
+import Link from "next/link";
+import { projects } from "@/lib/projects";
+import ProjectCard from "@/components/ProjectCard";
 
-export default function Home() {
+export default function HomePage() {
+  // Calculate statistics from the local dataset dynamically
+  const totalProjects = projects.length;
+  
+  const uniqueDomains = new Set(projects.map((p) => p.domain));
+  const totalDomains = uniqueDomains.size;
+
+  const totalStars = projects.reduce((acc, p) => acc + p.stars, 0);
+  const formattedTotalStars = (totalStars / 1000).toFixed(0) + "k+";
+
+  const beginnerFriendlyCount = projects.filter((p) => p.beginnerFriendly).length;
+  const pctBeginnerFriendly = Math.round((beginnerFriendlyCount / totalProjects) * 100);
+
+  // Filter top 3 featured projects by star count
+  const featuredProjects = [...projects]
+    .sort((a, b) => b.stars - a.stars)
+    .slice(0, 3);
+
+  // Domain configuration with descriptions, counts, and styles
+  const domainsList = [
+    {
+      id: "web",
+      name: "Web Development",
+      description: "Frontend compilers, rich components, reactive systems, and single-page application frames.",
+      icon: "🌐",
+      className: "web"
+    },
+    {
+      id: "aiml",
+      name: "AI/ML",
+      description: "Machine learning architectures, GPU acceleration computation, and advanced data processing.",
+      icon: "🧠",
+      className: "aiml"
+    },
+    {
+      id: "backend",
+      name: "Backend",
+      description: "Fast web frameworks, runtime compilers, microservices, and database interaction libraries.",
+      icon: "⚙️",
+      className: "backend"
+    },
+    {
+      id: "devops",
+      name: "DevOps",
+      description: "Automation frameworks, infrastructure builders, package tools, and virtualization setups.",
+      icon: "🚀",
+      className: "devops"
+    }
+  ];
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.js
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <div>
+      {/* Hero Section */}
+      <section className="hero">
+        <span className="hero-badge">Discover your next contribution</span>
+        <h1 className="hero-title">Open Source Project Explorer</h1>
+        <p className="hero-subtitle">
+          Jumpstart your developer journey by exploring curated open-source repositories.
+          Filter by difficulty, domain, or technology stack, and shortlist items for later.
+        </p>
+        <div style={{ display: "flex", justifyContent: "center", gap: "1rem" }}>
+          <Link href="/projects" className="btn btn-primary">
+            Explore All Projects
+          </Link>
+          <Link href="/saved" className="btn btn-outline">
+            View Shortlist
+          </Link>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+      </section>
+
+      {/* Dynamic Statistics Panel */}
+      <section className="stats-grid">
+        <div className="stat-card">
+          <div className="stat-value">{totalProjects}</div>
+          <div className="stat-label">Total Repositories</div>
         </div>
-      </main>
+        <div className="stat-card">
+          <div className="stat-value">{totalDomains}</div>
+          <div className="stat-label">Tech Domains</div>
+        </div>
+        <div className="stat-card">
+          <div className="stat-value">{formattedTotalStars}</div>
+          <div className="stat-label">Combined Stars</div>
+        </div>
+        <div className="stat-card">
+          <div className="stat-value">{pctBeginnerFriendly}%</div>
+          <div className="stat-label">Beginner Friendly</div>
+        </div>
+      </section>
+
+      {/* Domains Section */}
+      <section style={{ marginBottom: "4.5rem" }}>
+        <div className="section-header">
+          <h2 className="section-title">Browse by Category</h2>
+          <Link href="/projects" className="section-link">
+            See all categories &rarr;
+          </Link>
+        </div>
+        <div className="domains-grid">
+          {domainsList.map((dom) => {
+            const count = projects.filter((p) => p.domain === dom.name).length;
+            return (
+              <Link
+                key={dom.id}
+                href={`/projects?domain=${encodeURIComponent(dom.name)}`}
+                className={`domain-card ${dom.className}`}
+              >
+                <div className="domain-icon">{dom.icon}</div>
+                <div className="domain-info">
+                  <h3>{dom.name}</h3>
+                  <p style={{ color: "var(--text-secondary)", fontSize: "0.85rem", marginBottom: "0.5rem" }}>
+                    {dom.description}
+                  </p>
+                  <div className="domain-count">
+                    {count} {count === 1 ? "project" : "projects"} available
+                  </div>
+                </div>
+              </Link>
+            );
+          })}
+        </div>
+      </section>
+
+      {/* Featured Projects Grid */}
+      <section style={{ marginBottom: "2rem" }}>
+        <div className="section-header">
+          <h2 className="section-title">Curated Trending Repositories</h2>
+          <Link href="/projects?sort=stars" className="section-link">
+            View full list &rarr;
+          </Link>
+        </div>
+        <div className="projects-grid">
+          {featuredProjects.map((project) => (
+            <ProjectCard key={project.id} project={project} />
+          ))}
+        </div>
+      </section>
     </div>
   );
 }
