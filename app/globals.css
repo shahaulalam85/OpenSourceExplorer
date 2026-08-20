@@ -576,6 +576,16 @@ a {
   color: var(--primary);
 }
 
+.stretched-link::after {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1;
+  content: "";
+}
+
 .project-description {
   color: var(--text-secondary);
   font-size: 0.9rem;
@@ -603,6 +613,8 @@ a {
   border: 1px solid rgba(34, 48, 73, 0.6);
   cursor: pointer;
   transition: all 0.2s ease;
+  position: relative;
+  z-index: 2;
 }
 
 .tag:hover {
@@ -705,6 +717,8 @@ a {
   padding-top: 1rem;
   display: flex;
   gap: 0.75rem;
+  position: relative;
+  z-index: 2;
 }
 
 .saved-actions-panel .btn {

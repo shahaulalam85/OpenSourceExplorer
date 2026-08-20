@@ -64,7 +64,7 @@ export default function ProjectCard({
 
       <div>
         <div className="project-card-header">
-          <Link href={`/projects/${id}`}>
+          <Link href={`/projects/${id}`} className="stretched-link">
             <h3 className="project-title">{name}</h3>
           </Link>
         </div>
