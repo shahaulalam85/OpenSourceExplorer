@@ -426,12 +426,12 @@ a {
 .domain-card {
   background-color: var(--card-bg);
   border: 1px solid var(--border);
-  padding: 2rem 1.5rem;
+  padding: 1.5rem;
   border-radius: var(--radius-lg);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  height: 180px;
+  min-height: 200px;
   cursor: pointer;
   position: relative;
   overflow: hidden;
