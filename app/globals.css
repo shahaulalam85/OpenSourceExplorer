@@ -442,9 +442,27 @@ a {
 
 .domains-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  grid-template-columns: repeat(3, 1fr);
   gap: 1.5rem;
   margin-bottom: 4rem;
+}
+
+@media (min-width: 1400px) {
+  .domains-grid {
+    grid-template-columns: repeat(6, 1fr);
+  }
+}
+
+@media (max-width: 900px) {
+  .domains-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .domains-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 .domain-card {
@@ -566,7 +584,6 @@ a {
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
-  height: 4.5rem; /* ~3 lines */
   line-height: 1.5;
 }
 
