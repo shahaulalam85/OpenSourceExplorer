@@ -45,15 +45,17 @@ export default function DevOverlayReplica() {
           cursor: "pointer",
           zIndex: 999,
           boxShadow: "0 4px 12px rgba(0, 0, 0, 0.4)",
-          transition: "transform 0.2s, background-color 0.2s"
+          transition: "transform 0.2s, background-color 0.2s",
+          fontSize: "0.85rem",
+          fontWeight: "800",
+          fontFamily: "var(--font-sans)"
         }}
-        title="Next.js Developer Tools"
-        aria-label="Next.js Developer Tools"
+        title="Developer Preferences"
+        aria-label="Developer Preferences"
       >
-        <svg viewBox="0 0 100 100" width="14" height="14" fill="currentColor">
-          <path d="M20,80 L20,20 L40,20 L75,65 L75,20 L88,20 L88,80 L68,80 L33,35 L33,80 Z" />
-        </svg>
+        Md
       </button>
+
 
       {/* Floating Preferences Popover Menu */}
       {isOpen && (
