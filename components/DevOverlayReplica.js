@@ -5,27 +5,42 @@ import { useState, useEffect } from "react";
 export default function DevOverlayReplica() {
   const [isProduction, setIsProduction] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const [theme, setTheme] = useState("default");
 
   useEffect(() => {
-    // Only render the mock indicator in production builds
+    // Only render the mock indicator in production builds (e.g. Vercel)
     if (process.env.NODE_ENV === "production") {
       setIsProduction(true);
     }
+
+    // Load initial theme choice
+    const savedTheme = localStorage.getItem("prefTheme") || "default";
+    setTheme(savedTheme);
   }, []);
 
   if (!isProduction) {
     return null;
   }
 
-  const handlePreferencesClick = () => {
-    // Fire event to open the custom Preferences drawer inside Navbar.js
-    window.dispatchEvent(new Event("openPreferencesDrawer"));
-    setIsOpen(false);
+  const handleThemeChange = (e) => {
+    const newTheme = e.target.value;
+    setTheme(newTheme);
+    localStorage.setItem("prefTheme", newTheme);
+    
+    // Apply theme globally
+    if (newTheme !== "default") {
+      document.documentElement.setAttribute("data-theme", newTheme);
+    } else {
+      document.documentElement.removeAttribute("data-theme");
+    }
+
+    // Sync theme state across components (Navbar, etc.)
+    window.dispatchEvent(new Event("prefThemeChanged"));
   };
 
   return (
     <>
-      {/* Floating Next.js Dev tools style "N" Badge */}
+      {/* Floating Circle Button (Md Badge) */}
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="dev-overlay-replica-btn"
@@ -56,56 +71,110 @@ export default function DevOverlayReplica() {
         Md
       </button>
 
-
-      {/* Floating Preferences Popover Menu */}
+      {/* Mock Dev Tools Preferences Dialog Dialog */}
       {isOpen && (
         <div
-          className="dev-overlay-replica-popover"
+          className="dev-overlay-replica-dialog"
           style={{
             position: "fixed",
-            bottom: "4rem",
+            bottom: "4.5rem",
             left: "1.25rem",
-            width: "220px",
-            backgroundColor: "#0d111c",
-            border: "1px solid #1e293b",
-            borderRadius: "8px",
-            padding: "0.5rem",
-            boxShadow: "0 10px 25px rgba(0, 0, 0, 0.5)",
+            width: "360px",
+            maxWidth: "calc(100vw - 2.5rem)",
+            backgroundColor: "#0d0f12",
+            border: "1px solid #2d3139",
+            borderRadius: "12px",
+            boxShadow: "0 12px 32px rgba(0, 0, 0, 0.5)",
             zIndex: 1000,
-            display: "flex",
-            flexDirection: "column",
             color: "#fff",
-            animation: "fade-in 0.2s ease-out"
+            fontFamily: "var(--font-sans), system-ui, sans-serif",
+            animation: "fade-in 0.2s ease-out",
+            overflow: "hidden"
           }}
         >
-          <div
-            onClick={handlePreferencesClick}
-            className="dev-overlay-replica-row"
-            style={{
+          {/* Header */}
+          <div style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            padding: "1rem 1.25rem",
+            borderBottom: "1px solid #1e222b"
+          }}>
+            <span style={{ fontSize: "1.05rem", fontWeight: "600", letterSpacing: "-0.01em" }}>
+              Preferences
+            </span>
+            <button
+              onClick={() => setIsOpen(false)}
+              style={{
+                background: "none",
+                border: "none",
+                color: "#94a3b8",
+                cursor: "pointer",
+                padding: "4px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                transition: "color 0.2s"
+              }}
+              aria-label="Close Preferences"
+            >
+              <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" strokeWidth="2.5" fill="none">
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
+              </svg>
+            </button>
+          </div>
+
+          {/* Body */}
+          <div style={{ padding: "1.25rem" }}>
+            <div style={{
               display: "flex",
               justifyContent: "space-between",
               alignItems: "center",
-              padding: "0.5rem 0.75rem",
-              borderRadius: "6px",
-              cursor: "pointer",
-              transition: "background-color 0.2s"
-            }}
-          >
-            <span style={{ fontSize: "0.85rem", fontWeight: "500" }}>Preferences</span>
-            <svg
-              viewBox="0 0 24 24"
-              width="16"
-              height="16"
-              stroke="currentColor"
-              strokeWidth="2"
-              fill="none"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              style={{ color: "#94a3b8" }}
-            >
-              <circle cx="12" cy="12" r="3" />
-              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
-            </svg>
+              gap: "1.5rem"
+            }}>
+              <div style={{ flex: 1 }}>
+                <div style={{ fontSize: "0.95rem", fontWeight: "600", marginBottom: "0.2rem" }}>Theme</div>
+                <div style={{ fontSize: "0.8rem", color: "#94a3b8" }}>Select your theme preference.</div>
+              </div>
+              
+              {/* Custom Select dropdown */}
+              <div style={{ position: "relative" }}>
+                <select
+                  value={theme}
+                  onChange={handleThemeChange}
+                  style={{
+                    appearance: "none",
+                    backgroundColor: "#161b22",
+                    border: "1px solid #30363d",
+                    borderRadius: "6px",
+                    color: "#fff",
+                    fontSize: "0.85rem",
+                    padding: "0.4rem 2rem 0.4rem 0.75rem",
+                    fontWeight: "500",
+                    cursor: "pointer",
+                    outline: "none",
+                    minWidth: "120px"
+                  }}
+                >
+                  <option value="default">System</option>
+                  <option value="cyberpunk">Cyberpunk</option>
+                  <option value="oceanic">Oceanic</option>
+                  <option value="light">Light</option>
+                </select>
+                <div style={{
+                  position: "absolute",
+                  right: "0.75rem",
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                  pointerEvents: "none",
+                  color: "#94a3b8",
+                  fontSize: "0.6rem"
+                }}>
+                  ▼
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       )}
