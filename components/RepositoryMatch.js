@@ -61,66 +61,7 @@ export default function RepositoryMatch({ project }) {
   }
   matchPct = Math.min(matchPct, 100);
 
-  // Determine contribution recommendations based on domain and difficulty
-  const recommendations = [];
 
-  // 1. Documentation
-  if (difficulty.toLowerCase() === "advanced") {
-    recommendations.push({ label: "Documentation", level: "medium", icon: "🟡" });
-  } else {
-    recommendations.push({ label: "Documentation", level: "high", icon: "🟢" });
-  }
-
-  // 2. Good First Issue
-  if (beginnerFriendly) {
-    recommendations.push({ label: "Good First Issue", level: "high", icon: "🟢" });
-  } else if (difficulty.toLowerCase() === "beginner") {
-    recommendations.push({ label: "Good First Issue", level: "high", icon: "🟢" });
-  } else if (difficulty.toLowerCase() === "intermediate") {
-    recommendations.push({ label: "Good First Issue", level: "medium", icon: "🟡" });
-  } else {
-    recommendations.push({ label: "Good First Issue", level: "low", icon: "🔴" });
-  }
-
-  // 3. Technical Areas (Backend/Frontend/DevOps/AI-ML)
-  const userHasFrontend = userSkills.some(s => ["react", "next.js", "javascript", "typescript", "svelte", "flutter"].includes(s.toLowerCase()));
-  const userHasBackend = userSkills.some(s => ["node.js", "go", "python", "rust", "java", "spring boot"].includes(s.toLowerCase()));
-  const userHasDevOps = userSkills.some(s => ["docker", "kubernetes", "go", "python"].includes(s.toLowerCase()));
-  const userHasAIML = userSkills.some(s => ["python"].includes(s.toLowerCase()));
-
-  if (domain === "Web Development" || domain === "Mobile Development") {
-    recommendations.push({
-      label: "Frontend",
-      level: userHasFrontend ? "high" : "medium",
-      icon: userHasFrontend ? "🟢" : "🟡"
-    });
-  } else if (domain === "Backend") {
-    recommendations.push({
-      label: "Backend",
-      level: userHasBackend ? "high" : "medium",
-      icon: userHasBackend ? "🟢" : "🟡"
-    });
-  } else if (domain === "DevOps") {
-    recommendations.push({
-      label: "DevOps",
-      level: userHasDevOps ? "high" : "medium",
-      icon: userHasDevOps ? "🟢" : "🟡"
-    });
-  } else if (domain === "AI/ML") {
-    recommendations.push({
-      label: "AI/ML",
-      level: userHasAIML ? "high" : "medium",
-      icon: userHasAIML ? "🟢" : "🟡"
-    });
-  } else {
-    // Systems & Security
-    const userHasSystems = userSkills.some(s => ["c++", "rust", "go"].includes(s.toLowerCase()));
-    recommendations.push({
-      label: "Systems Development",
-      level: userHasSystems ? "high" : "medium",
-      icon: userHasSystems ? "🟢" : "🟡"
-    });
-  }
 
   return (
     <div className="sidebar-card" style={{ marginBottom: "1.5rem", borderLeft: "4px solid var(--primary)" }}>
@@ -172,19 +113,7 @@ export default function RepositoryMatch({ project }) {
         <span style={{ fontWeight: "700" }}>{difficulty}</span>
       </div>
 
-      <div>
-        <h4 style={{ fontSize: "0.8rem", fontWeight: "700", textTransform: "uppercase", color: "var(--text-muted)", marginBottom: "0.35rem" }}>
-          Recommended Contribution:
-        </h4>
-        <div style={{ display: "flex", flexDirection: "column", gap: "0.3rem" }}>
-          {recommendations.map((rec) => (
-            <div key={rec.label} style={{ display: "flex", alignItems: "center", gap: "0.4rem", fontSize: "0.85rem" }}>
-              <span>{rec.icon}</span>
-              <span>{rec.label}</span>
-            </div>
-          ))}
-        </div>
-      </div>
+
     </div>
   );
 }

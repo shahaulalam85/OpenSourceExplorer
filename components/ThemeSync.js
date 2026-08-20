@@ -4,7 +4,7 @@ import { useEffect } from "react";
 
 export default function ThemeSync() {
   useEffect(() => {
-    // Helper to hide non-preference rows in Next.js Dev Overlay
+    // Helper to hide non-preference rows and options in Next.js Dev Overlay
     const cleanDevOverlay = (shadowRoot) => {
       if (!shadowRoot) return;
 
@@ -15,17 +15,40 @@ export default function ThemeSync() {
         false
       );
 
-      const targets = ["Route", "Bundler", "Route Info"];
-      const nodesToHide = [];
+      const popoverTargets = ["Route", "Bundler", "Route Info"];
+      const preferenceTargets = [
+        "Position",
+        "Size",
+        "Hide Dev Tools for this session",
+        "Hide Dev Tools shortcut",
+        "Disable Dev Tools for this project",
+        "Restart Dev Server",
+        "Reset Bundler Cache"
+      ];
 
+      const nodesToHide = [];
       let node;
+
       while ((node = walker.nextNode())) {
         const text = node.textContent.trim();
-        if (targets.includes(text)) {
+        if (popoverTargets.includes(text)) {
           let current = node.parentElement;
           while (current && current.parentElement) {
             const parentText = current.parentElement.textContent || "";
             if (parentText.includes("Preferences")) {
+              nodesToHide.push(current);
+              break;
+            }
+            current = current.parentElement;
+          }
+        } else if (preferenceTargets.includes(text)) {
+          let current = node.parentElement;
+          while (current && current.parentElement) {
+            const parentText = current.parentElement.textContent || "";
+            const currentText = current.textContent || "";
+            // Find the option container row: it is a child of the container holding "Theme", 
+            // but is not the "Theme" container itself
+            if (parentText.includes("Theme") && !currentText.includes("Theme")) {
               nodesToHide.push(current);
               break;
             }
