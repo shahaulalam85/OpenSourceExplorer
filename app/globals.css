@@ -26,6 +26,12 @@
   --accent-yellow: #eab308;
   --accent-yellow-glow: rgba(234, 179, 8, 0.15);
 
+  --accent-rose: #f43f5e;
+  --accent-rose-glow: rgba(244, 63, 94, 0.15);
+
+  --accent-cyan: #06b6d4;
+  --accent-cyan-glow: rgba(6, 182, 212, 0.15);
+
   --border: #223049;
   --border-focus: #3b82f6;
 
@@ -65,6 +71,12 @@
     --accent-purple: #7c3aed;
     --accent-purple-glow: rgba(124, 58, 237, 0.08);
 
+    --accent-rose: #e11d48;
+    --accent-rose-glow: rgba(225, 29, 72, 0.08);
+
+    --accent-cyan: #0891b2;
+    --accent-cyan-glow: rgba(8, 145, 178, 0.08);
+
     --border: #e2e8f0;
     --border-focus: #2563eb;
 
@@ -95,6 +107,12 @@
 
   --accent-purple: #7c3aed;
   --accent-purple-glow: rgba(124, 58, 237, 0.08);
+
+  --accent-rose: #e11d48;
+  --accent-rose-glow: rgba(225, 29, 72, 0.08);
+
+  --accent-cyan: #0891b2;
+  --accent-cyan-glow: rgba(8, 145, 178, 0.08);
 
   --border: #e2e8f0;
   --border-focus: #2563eb;
@@ -128,6 +146,12 @@
 
   --accent-yellow: #eab308;
   --accent-yellow-glow: rgba(234, 179, 8, 0.15);
+
+  --accent-rose: #f43f5e;
+  --accent-rose-glow: rgba(244, 63, 94, 0.15);
+
+  --accent-cyan: #06b6d4;
+  --accent-cyan-glow: rgba(6, 182, 212, 0.15);
 
   --border: #223049;
   --border-focus: #3b82f6;
@@ -454,6 +478,8 @@ a {
 .domain-card.aiml::after { background: var(--accent-purple); }
 .domain-card.backend::after { background: var(--secondary); }
 .domain-card.devops::after { background: var(--accent-yellow); }
+.domain-card.mobile::after { background: var(--accent-rose); }
+.domain-card.systems::after { background: var(--accent-cyan); }
 
 .domain-card:hover {
   transform: translateY(-4px);
@@ -468,6 +494,8 @@ a {
 .domain-card.aiml:hover { border-color: rgba(168, 85, 247, 0.4); }
 .domain-card.backend:hover { border-color: rgba(59, 130, 246, 0.4); }
 .domain-card.devops:hover { border-color: rgba(234, 179, 8, 0.4); }
+.domain-card.mobile:hover { border-color: rgba(244, 63, 94, 0.4); }
+.domain-card.systems:hover { border-color: rgba(6, 182, 212, 0.4); }
 
 .domain-icon {
   font-size: 1.75rem;

@@ -49,6 +49,20 @@ export default function HomePage() {
       description: "Automation frameworks, infrastructure builders, package tools, and virtualization setups.",
       icon: "🚀",
       className: "devops"
+    },
+    {
+      id: "mobile",
+      name: "Mobile Development",
+      description: "Cross-platform framework toolkits, mobile runtime engines, native integrations, and application SDKs.",
+      icon: "📱",
+      className: "mobile"
+    },
+    {
+      id: "systems",
+      name: "Systems & Security",
+      description: "High-performance engines, low-level runtimes, compiler design, security systems, and cryptography libraries.",
+      icon: "🛡️",
+      className: "systems"
     }
   ];
 

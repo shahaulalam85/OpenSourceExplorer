@@ -8,7 +8,9 @@ const DOMAINS = [
   { label: "Web", value: "Web Development" },
   { label: "AI/ML", value: "AI/ML" },
   { label: "Backend", value: "Backend" },
-  { label: "DevOps", value: "DevOps" }
+  { label: "DevOps", value: "DevOps" },
+  { label: "Mobile", value: "Mobile Development" },
+  { label: "Systems", value: "Systems & Security" }
 ];
 
 export default function ProjectExplorer({
