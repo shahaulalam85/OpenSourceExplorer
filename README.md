@@ -2,8 +2,6 @@
 
 Open Source Project Explorer is a responsive, feature-rich web application built with **Next.js 16 (App Router)** and **React 19** designed to help developers find and track open-source projects. Developers can discover repositories filtered by tech domains, coding difficulty, and technology tags, with bookmarking supported via local persistence.
 
-This project is built as an academic submission for **Assignment 3 (Next.js Curriculum)**.
-
 ---
 
 ## 🚀 Key Features
@@ -80,11 +78,4 @@ npm run build
 npm run start
 ```
 
----
 
-## 🎓 What I Learned
-
-* **Next.js App Router**: Implementing server/client boundaries, dynamic dynamic path queries, and rendering static pre-build segments via `generateStaticParams`.
-* **State Sync with Custom Events**: Propagating state changes reactively between isolated React components using browser `window.dispatchEvent` triggers.
-* **Next.js 15+ Async searchParams**: Handling search arguments safely as Promises in server routes to prevent hydration warnings.
-* **Modern Vanilla CSS Theme Design**: Structuring dark-mode visual elements with HSL color variables and scaling cubic transitions.

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import BookmarkButton from "@/components/BookmarkButton";
 import { formatStars } from "@/lib/projects";
+import { playSynthClick } from "@/lib/audio";
 
 export default function ProjectCard({
   project,
@@ -40,6 +41,7 @@ export default function ProjectCard({
   const handleTagClick = (e, tag) => {
     e.preventDefault();
     e.stopPropagation();
+    playSynthClick();
     if (onTagClick) {
       onTagClick(tag);
     }

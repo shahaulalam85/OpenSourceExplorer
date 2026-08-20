@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { playSynthChimeUp, playSynthChimeDown } from "@/lib/audio";
 
 export default function BookmarkButton({ projectId }) {
   const [isBookmarked, setIsBookmarked] = useState(false);
@@ -38,8 +39,10 @@ export default function BookmarkButton({ projectId }) {
 
       if (list.includes(numId)) {
         list = list.filter((id) => id !== numId);
+        playSynthChimeDown();
       } else {
         list.push(numId);
+        playSynthChimeUp();
       }
 
       localStorage.setItem("savedProjects", JSON.stringify(list));

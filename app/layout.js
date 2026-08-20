@@ -23,8 +23,7 @@ export default function RootLayout({ children }) {
           <main className="main-content">{children}</main>
           <footer className="footer-bar">
             <p>
-              &copy; {new Date().getFullYear()} OpenSource Explorer. Academic
-              Assignment 3. All rights reserved.
+              &copy; {new Date().getFullYear()} OpenSource Explorer. All rights reserved.
             </p>
           </footer>
         </div>

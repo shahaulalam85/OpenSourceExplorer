@@ -1213,3 +1213,311 @@ a {
   margin-bottom: 2rem;
   font-size: 1rem;
 }
+
+/* Custom Themes */
+[data-theme="cyberpunk"] {
+  --bg-color: #0b0114;
+  --card-bg: #150325;
+  --card-hover: #210638;
+  --border: #3b0b5e;
+  --text-primary: #f8fafc;
+  --text-secondary: #d8b4fe;
+  --text-muted: #8b5cf6;
+  --primary: #ec4899;
+  --primary-hover: #f472b6;
+  --primary-glow: rgba(236, 72, 153, 0.15);
+  --secondary: #06b6d4;
+  --secondary-glow: rgba(6, 182, 212, 0.15);
+  --accent-purple: #ab20fd;
+  --accent-purple-glow: rgba(171, 32, 253, 0.15);
+  --shadow-glow: 0 0 20px 2px rgba(236, 72, 153, 0.25);
+  --border-focus: #ec4899;
+}
+
+[data-theme="oceanic"] {
+  --bg-color: #030a16;
+  --card-bg: #071529;
+  --card-hover: #0b2240;
+  --border: #132e54;
+  --text-primary: #f0f9ff;
+  --text-secondary: #bae6fd;
+  --text-muted: #64748b;
+  --primary: #0284c7;
+  --primary-hover: #38bdf8;
+  --primary-glow: rgba(2, 132, 199, 0.15);
+  --secondary: #2563eb;
+  --secondary-glow: rgba(37, 99, 237, 0.15);
+  --accent-purple: #818cf8;
+  --accent-purple-glow: rgba(129, 140, 248, 0.15);
+  --shadow-glow: 0 0 20px 2px rgba(2, 132, 199, 0.25);
+  --border-focus: #0284c7;
+}
+
+/* Settings / Preferences Drawer */
+.settings-drawer-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(3, 7, 18, 0.6);
+  backdrop-filter: blur(4px);
+  z-index: 1000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.settings-drawer-backdrop.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.settings-drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 380px;
+  max-width: 100%;
+  height: 100vh;
+  background-color: var(--card-bg);
+  border-left: 1px solid var(--border);
+  box-shadow: -10px 0 30px rgba(0, 0, 0, 0.5);
+  z-index: 1001;
+  transform: translateX(100%);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  flex-direction: column;
+  color: var(--text-primary);
+}
+
+.settings-drawer.active {
+  transform: translateX(0);
+}
+
+.settings-drawer-header {
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.settings-drawer-header h3 {
+  font-size: 1.25rem;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.settings-close-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 0.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s;
+  border-radius: var(--radius-sm);
+}
+
+.settings-close-btn:hover {
+  color: var(--text-primary);
+  background-color: var(--card-hover);
+}
+
+.settings-drawer-content {
+  padding: 1.5rem;
+  flex-grow: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.setting-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.setting-label {
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+}
+
+/* Theme Options Selector */
+.theme-options {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.75rem;
+}
+
+.theme-opt-btn {
+  background-color: var(--bg-color);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 0.75rem;
+  cursor: pointer;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  transition: all 0.2s ease;
+}
+
+.theme-opt-btn:hover {
+  border-color: var(--text-muted);
+  background-color: var(--card-hover);
+}
+
+.theme-opt-btn.active {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 1px var(--primary);
+  background-color: var(--card-hover);
+}
+
+.theme-opt-color-dots {
+  display: flex;
+  gap: 0.35rem;
+}
+
+.theme-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+
+.theme-opt-name {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+/* Sound Switch Toggle */
+.sound-toggle-wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: var(--bg-color);
+  border: 1px solid var(--border);
+  padding: 0.85rem 1rem;
+  border-radius: var(--radius-md);
+}
+
+.sound-toggle-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.sound-toggle-title {
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.sound-toggle-desc {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  height: 24px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--border);
+  transition: .3s;
+  border-radius: 24px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: var(--text-primary);
+  transition: .3s;
+  border-radius: 50%;
+}
+
+input:checked + .slider {
+  background-color: var(--primary);
+}
+
+input:checked + .slider:before {
+  transform: translateX(20px);
+}
+
+/* Goal Tracker Card */
+.goal-tracker-card {
+  background-color: var(--bg-color);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.goal-tracker-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.85rem;
+}
+
+.goal-tracker-stat {
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.goal-progress-bar-bg {
+  height: 8px;
+  background-color: var(--border);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.goal-progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--secondary) 0%, var(--primary) 100%);
+  border-radius: 4px;
+  transition: width 0.4s ease;
+}
+
+.goal-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 0.5rem;
+}
+
+.goal-slider {
+  flex-grow: 1;
+  margin: 0 1rem;
+  accent-color: var(--primary);
+}
