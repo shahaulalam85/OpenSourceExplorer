@@ -188,8 +188,8 @@ a {
 
 .main-content {
   flex-grow: 1;
-  padding: 2rem 1.5rem;
-  max-width: 1200px;
+  padding: 2rem 4%;
+  max-width: 100%;
   width: 100%;
   margin: 0 auto;
 }
@@ -205,9 +205,9 @@ a {
 }
 
 .navbar-container {
-  max-width: 1200px;
+  max-width: 100%;
   margin: 0 auto;
-  padding: 1rem 1.5rem;
+  padding: 1rem 4%;
   display: flex;
   justify-content: space-between;
   align-items: center;

@@ -1,36 +1,90 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Open Source Project Explorer
 
-## Getting Started
+Open Source Project Explorer is a responsive, feature-rich web application built with **Next.js 16 (App Router)** and **React 19** designed to help developers find and track open-source projects. Developers can discover repositories filtered by tech domains, coding difficulty, and technology tags, with bookmarking supported via local persistence.
 
-First, run the development server:
+This project is built as an academic submission for **Assignment 3 (Next.js Curriculum)**.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+---
+
+## 🚀 Key Features
+
+* **Home Dashboard**: Offers dynamic, programmatically derived repository statistics, featured repositories sorted by stars, and browse-by-category cards.
+* **Multi-Criteria Filter & Search**: Supports live search matching name, description, language, or technology tag. Filters include Domain selection tabs, a Difficulty dropdown, and a "Beginner Friendly" indicator checkbox.
+* **Reactive Bookmarking**: Persists user bookmarks inside browser `localStorage`. Uses custom browser window events to synchronize saved lists across different pages instantly.
+* **Presenter Saved Layout**: The `/saved` path renders saved cards with specialized layout actions: `[View Details]` (redirect to detail page) and `[Remove]` (remove from shortlist immediately).
+* **Tag-Click Redirection**: Clicking a technology tag on any project card dynamically populates the search bar to filter the catalog.
+* **Static Generation Details Route (`/projects/[id]`)**: Auto-generates static details pages at build-time using `generateStaticParams()` for high SEO scoring and immediate loading.
+* **Premium Theme Styling**: Structured entirely with vanilla CSS variables (no external CSS libraries) showcasing custom scrollbars, emerald accents on dark slate backgrounds, and micro-interaction hover scaling.
+
+---
+
+## 🛠️ Technology Stack
+
+* **Core Framework**: Next.js 16 (App Router)
+* **Library**: React 19
+* **Styling**: Vanilla CSS3 Custom Properties (CSS variables)
+* **Persistence**: Web Storage API (`localStorage`)
+* **Package Manager**: npm
+
+---
+
+## 📁 Project Architecture
+
+```text
+OpenSourceProject/
+├── app/
+│   ├── globals.css           # Styling theme tokens and global rules
+│   ├── layout.js             # Root layout with Inter font and Navbar
+│   ├── page.js               # Home dashboard view & dynamic stats
+│   ├── not-found.js          # Fallback custom 404 page
+│   ├── projects/
+│   │   ├── page.js           # Server Component fetching URL parameters
+│   │   └── [id]/
+│   │       └── page.js       # Static generated details page
+│   └── saved/
+│       └── page.js           # Client Component for saved bookmarks
+├── components/
+│   ├── Navbar.js             # Navigation header tracking route state
+│   ├── ProjectCard.js        # Repository block card supporting actions mode
+│   ├── ProjectExplorer.js    # Multi-filter search control panel
+│   └── BookmarkButton.js     # React client bookmark state toggle
+├── lib/
+│   └── projects.js           # Shared mock database of 10 repositories
+├── jsconfig.json             # Absolute path mapping (@/* -> ./*)
+├── package.json              # Dependency declarations
+└── README.md                 # Project documentation
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+## ⚙️ Getting Started
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Local Development
 
-## Learn More
+1. **Install Dependencies**:
+   ```bash
+   npm install
+   ```
 
-To learn more about Next.js, take a look at the following resources:
+2. **Start Development Server**:
+   ```bash
+   npm run dev
+   ```
+   Open [http://localhost:3000](http://localhost:3000) in your web browser.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Production Build
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Compile, build, and optimize the application for production:
+```bash
+npm run build
+npm run start
+```
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 🎓 What I Learned
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+* **Next.js App Router**: Implementing server/client boundaries, dynamic dynamic path queries, and rendering static pre-build segments via `generateStaticParams`.
+* **State Sync with Custom Events**: Propagating state changes reactively between isolated React components using browser `window.dispatchEvent` triggers.
+* **Next.js 15+ Async searchParams**: Handling search arguments safely as Promises in server routes to prevent hydration warnings.
+* **Modern Vanilla CSS Theme Design**: Structuring dark-mode visual elements with HSL color variables and scaling cubic transitions.
