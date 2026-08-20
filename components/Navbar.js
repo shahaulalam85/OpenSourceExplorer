@@ -68,10 +68,16 @@ export default function Navbar() {
       }
     };
 
+    const handleOpenDrawer = () => {
+      setIsOpen(true);
+    };
+
     updateSavedCount();
     window.addEventListener("savedProjectsChanged", updateSavedCount);
+    window.addEventListener("openPreferencesDrawer", handleOpenDrawer);
     return () => {
       window.removeEventListener("savedProjectsChanged", updateSavedCount);
+      window.removeEventListener("openPreferencesDrawer", handleOpenDrawer);
     };
   }, []);
 

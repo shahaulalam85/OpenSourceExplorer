@@ -2,6 +2,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import ThemeSync from "@/components/ThemeSync";
+import DevOverlayReplica from "@/components/DevOverlayReplica";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -21,6 +22,7 @@ export default function RootLayout({ children }) {
         <div className="app-container">
           <Navbar />
           <main className="main-content">{children}</main>
+          <DevOverlayReplica />
           <footer className="footer-bar">
             <p>
               &copy; {new Date().getFullYear()} OpenSource Explorer. All rights reserved.

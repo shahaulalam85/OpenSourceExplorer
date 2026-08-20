@@ -1214,6 +1214,16 @@ a {
   font-size: 1rem;
 }
 
+/* Dev Overlay Replica hover styling */
+.dev-overlay-replica-btn:hover {
+  background-color: #1e293b !important;
+  transform: scale(1.05);
+}
+
+.dev-overlay-replica-row:hover {
+  background-color: #1e293b !important;
+}
+
 /* Custom Themes */
 [data-theme="cyberpunk"] {
   --bg-color: #0b0114;
