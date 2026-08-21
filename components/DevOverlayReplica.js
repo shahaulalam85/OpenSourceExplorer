@@ -3,6 +3,11 @@
 import { useState, useEffect } from "react";
 import { projects } from "@/lib/projects";
 
+const TECH_OPTIONS = [
+  "React", "TypeScript", "JavaScript", "Python", "Go", "Rust", 
+  "Node.js", "Next.js", "Java", "Spring Boot", "Flutter", "Docker", "Kubernetes", "C++"
+];
+
 export default function DevOverlayReplica() {
   const [isProduction, setIsProduction] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
@@ -17,6 +22,7 @@ export default function DevOverlayReplica() {
   const [explainAnswer, setExplainAnswer] = useState("");
   const [selectedSumProj, setSelectedSumProj] = useState(1);
   const [selectedMatchProj, setSelectedMatchProj] = useState(1);
+  const [tempSelectedSkills, setTempSelectedSkills] = useState(["React", "TypeScript"]);
   const [expandedFolders, setExpandedFolders] = useState({
     toolkit: true,
     ai: true
@@ -202,64 +208,103 @@ export default function DevOverlayReplica() {
           {activeTool === "is-project-for-me" && (
             <div style={{ padding: "1.25rem", borderBottom: "1px solid #1e222b" }}>
               <div style={{ fontSize: "1.05rem", fontWeight: "700", marginBottom: "0.5rem" }}>🤔 Is this Project for me</div>
-              <div style={{ marginBottom: "0.75rem" }}>
-                <label style={{ fontSize: "0.75rem", color: "#8b949e", display: "block", marginBottom: "4px" }}>Select Repository</label>
-                <select value={selectedMatchProj} onChange={(e) => setSelectedMatchProj(Number(e.target.value))} style={{ width: "100%", backgroundColor: "#161b22", border: "1px solid #30363d", borderRadius: "6px", color: "#fff", fontSize: "0.8rem", padding: "6px" }}>
-                  {projects.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
-                </select>
+              <p style={{ fontSize: "0.85rem", color: "#94a3b8", marginBottom: "0.75rem" }}>
+                Select your tech stack to find the best matching repositories:
+              </p>
+              
+              {/* Grid of skills */}
+              <div style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(3, 1fr)",
+                gap: "0.4rem",
+                backgroundColor: "#161b22",
+                border: "1px solid #30363d",
+                padding: "0.6rem",
+                borderRadius: "8px",
+                maxHeight: "130px",
+                overflowY: "auto",
+                marginBottom: "1rem"
+              }}>
+                {TECH_OPTIONS.map((skill) => {
+                  const isSelected = tempSelectedSkills.includes(skill);
+                  return (
+                    <button
+                      key={skill}
+                      onClick={() => {
+                        if (tempSelectedSkills.includes(skill)) {
+                          setTempSelectedSkills(tempSelectedSkills.filter(s => s !== skill));
+                        } else {
+                          setTempSelectedSkills([...tempSelectedSkills, skill]);
+                        }
+                      }}
+                      style={{
+                        backgroundColor: isSelected ? "#10b981" : "#21262d",
+                        border: isSelected ? "1px solid #10b981" : "1px solid #30363d",
+                        color: isSelected ? "#fff" : "#c9d1d9",
+                        borderRadius: "4px",
+                        fontSize: "0.7rem",
+                        padding: "4px",
+                        cursor: "pointer",
+                        fontWeight: isSelected ? "700" : "normal",
+                        transition: "all 0.15s"
+                      }}
+                    >
+                      {skill}
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* Suggestions */}
+              <div style={{ fontSize: "0.85rem", fontWeight: "700", marginBottom: "0.5rem", color: "#10b981" }}>
+                Suggested Repositories:
               </div>
 
               {(() => {
-                const p = projects.find(x => x.id === selectedMatchProj);
-                if (!p) return null;
-                
-                const skillMatches = userSkills.map((skill) => {
-                  const isTechMatch = p.technologies.some(
-                    (tech) => tech.toLowerCase() === skill.toLowerCase()
-                  );
-                  const isLangMatch = p.language.toLowerCase() === skill.toLowerCase();
-                  return {
-                    name: skill,
-                    matched: isTechMatch || isLangMatch
-                  };
-                });
+                const getSuggestions = () => {
+                  if (tempSelectedSkills.length === 0) return [];
+                  const scored = projects.map(p => {
+                    const matches = tempSelectedSkills.filter(skill => 
+                      p.technologies.some(t => t.toLowerCase() === skill.toLowerCase()) ||
+                      p.language.toLowerCase() === skill.toLowerCase()
+                    ).length;
+                    const pct = tempSelectedSkills.length ? Math.round(45 + (matches / tempSelectedSkills.length) * 40 + 15) : 0;
+                    return { project: p, score: matches > 0 ? Math.min(pct, 100) : 0 };
+                  });
+                  return scored.filter(item => item.score > 0).sort((a, b) => b.score - a.score);
+                };
+                const suggestions = getSuggestions();
 
-                const matchedCount = skillMatches.filter((s) => s.matched).length;
-                let matchPct = 0;
-                if (matchedCount > 0 && userSkills.length > 0) {
-                  matchPct = Math.round(45 + (matchedCount / userSkills.length) * 40 + 15);
+                if (suggestions.length === 0) {
+                  return (
+                    <div style={{ fontSize: "0.8rem", color: "#8b949e", fontStyle: "italic", textAlign: "center", padding: "1rem" }}>
+                      Select some skills above to see recommendations.
+                    </div>
+                  );
                 }
-                matchPct = Math.min(matchPct, 100);
 
                 return (
-                  <div style={{ backgroundColor: "#161b22", border: "1px solid #30363d", padding: "1rem", borderRadius: "8px", marginTop: "1rem" }}>
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.75rem" }}>
-                      <span style={{ fontWeight: "700", fontSize: "0.95rem" }}>Repository Match</span>
-                      <span style={{ fontSize: "1rem", fontWeight: "800", color: "#10b981" }}>{matchPct}%</span>
-                    </div>
-
-                    <div style={{ marginBottom: "0.75rem" }}>
-                      <h4 style={{ fontSize: "0.75rem", fontWeight: "700", textTransform: "uppercase", color: "#8b949e", marginBottom: "0.35rem" }}>
-                        Your Skills Alignment:
-                      </h4>
-                      <div style={{ display: "flex", flexDirection: "column", gap: "0.2rem" }}>
-                        {skillMatches.map((skill) => (
-                          <div key={skill.name} style={{ display: "flex", alignItems: "center", gap: "0.4rem", fontSize: "0.8rem" }}>
-                            <span style={{ color: skill.matched ? "#10b981" : "#ff7b72", fontWeight: "bold" }}>
-                              {skill.matched ? "✓" : "✗"}
-                            </span>
-                            <span style={{ color: skill.matched ? "#f8fafc" : "#8b949e" }}>
-                              {skill.name}
+                  <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem", maxHeight: "180px", overflowY: "auto" }}>
+                    {suggestions.slice(0, 4).map(({ project: p, score }) => (
+                      <div key={p.id} style={{ backgroundColor: "#161b22", border: "1px solid #30363d", padding: "0.6rem 0.75rem", borderRadius: "8px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                        <div style={{ flex: 1, marginRight: "0.5rem" }}>
+                          <div style={{ display: "flex", alignItems: "center", gap: "0.4rem" }}>
+                            <a href={`/projects/${p.id}`} onClick={() => setIsOpen(false)} style={{ color: "#58a6ff", fontWeight: "600", textDecoration: "none", fontSize: "0.85rem" }}>
+                              {p.name}
+                            </a>
+                            <span style={{ fontSize: "0.7rem", color: "#8b949e", backgroundColor: "#21262d", padding: "1px 4px", borderRadius: "3px" }}>
+                              {p.difficulty}
                             </span>
                           </div>
-                        ))}
+                          <div style={{ fontSize: "0.7rem", color: "#8b949e", marginTop: "2px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: "180px" }}>
+                            {p.technologies.slice(0, 3).join(", ")}
+                          </div>
+                        </div>
+                        <div style={{ fontSize: "0.85rem", fontWeight: "800", color: "#10b981", backgroundColor: "rgba(16, 185, 129, 0.1)", padding: "4px 8px", borderRadius: "4px" }}>
+                          {score}% Match
+                        </div>
                       </div>
-                    </div>
-
-                    <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.8rem", color: "#c9d1d9" }}>
-                      <span>Difficulty:</span>
-                      <span style={{ fontWeight: "700" }}>{p.difficulty}</span>
-                    </div>
+                    ))}
                   </div>
                 );
               })()}
