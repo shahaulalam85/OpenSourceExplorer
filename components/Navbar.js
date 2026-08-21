@@ -4,23 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { playSynthClick, playSynthChimeUp } from "@/lib/audio";
-
-const AVAILABLE_SKILLS = [
-  "Java",
-  "React",
-  "Spring Boot",
-  "JavaScript",
-  "TypeScript",
-  "Python",
-  "Go",
-  "Rust",
-  "C++",
-  "Node.js",
-  "Next.js",
-  "Flutter",
-  "Docker",
-  "Kubernetes"
-];
+import { projects } from "@/lib/projects";
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -29,7 +13,7 @@ export default function Navbar() {
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [weeklyGoal, setWeeklyGoal] = useState(3);
   const [savedCount, setSavedCount] = useState(0);
-  const [userSkills, setUserSkills] = useState([]);
+  const [recentlyViewed, setRecentlyViewed] = useState([]);
 
   useEffect(() => {
     // Load initial values from localStorage
@@ -37,17 +21,12 @@ export default function Navbar() {
     const savedSound = localStorage.getItem("prefSound") !== "false";
     const savedGoal = Number(localStorage.getItem("prefGoal")) || 3;
     const savedSkills = localStorage.getItem("userSkills");
-
     setTheme(savedTheme);
     setSoundEnabled(savedSound);
     setWeeklyGoal(savedGoal);
-
     if (!savedSkills) {
       const defaultSkills = ["Java", "React", "Spring Boot"];
       localStorage.setItem("userSkills", JSON.stringify(defaultSkills));
-      setUserSkills(defaultSkills);
-    } else {
-      setUserSkills(JSON.parse(savedSkills));
     }
 
     // Apply theme
@@ -68,15 +47,30 @@ export default function Navbar() {
       }
     };
 
+    // Sync recently viewed projects
+    const updateRecentlyViewed = () => {
+      try {
+        const saved = localStorage.getItem("recentlyViewed");
+        const list = saved ? JSON.parse(saved) : [];
+        const resolved = list.map(id => projects.find(p => p.id === id)).filter(Boolean);
+        setRecentlyViewed(resolved);
+      } catch (e) {
+        setRecentlyViewed([]);
+      }
+    };
+
     const handleOpenDrawer = () => {
       setIsOpen(true);
     };
 
     updateSavedCount();
+    updateRecentlyViewed();
     window.addEventListener("savedProjectsChanged", updateSavedCount);
+    window.addEventListener("recentlyViewedChanged", updateRecentlyViewed);
     window.addEventListener("openPreferencesDrawer", handleOpenDrawer);
     return () => {
       window.removeEventListener("savedProjectsChanged", updateSavedCount);
+      window.removeEventListener("recentlyViewedChanged", updateRecentlyViewed);
       window.removeEventListener("openPreferencesDrawer", handleOpenDrawer);
     };
   }, []);
@@ -109,18 +103,7 @@ export default function Navbar() {
     playSynthClick();
   };
 
-  const handleSkillToggle = (skill) => {
-    let nextSkills;
-    if (userSkills.includes(skill)) {
-      nextSkills = userSkills.filter((s) => s !== skill);
-    } else {
-      nextSkills = [...userSkills, skill];
-    }
-    setUserSkills(nextSkills);
-    localStorage.setItem("userSkills", JSON.stringify(nextSkills));
-    window.dispatchEvent(new Event("userSkillsChanged"));
-    playSynthClick();
-  };
+
 
   const toggleDrawer = () => {
     setIsOpen(!isOpen);
@@ -185,6 +168,48 @@ export default function Navbar() {
                 >
                   Saved Projects
                 </Link>
+              </li>
+              <li className="nav-dropdown-item">
+                <button
+                  className="navbar-link"
+                  style={{
+                    background: "none",
+                    border: "none",
+                    fontFamily: "inherit",
+                    fontSize: "inherit",
+                    cursor: "pointer",
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: "0.25rem",
+                    padding: 0
+                  }}
+                >
+                  Recently Viewed
+                  <svg viewBox="0 0 24 24" width="12" height="12" stroke="currentColor" strokeWidth="2.5" fill="none">
+                    <polyline points="6 9 12 15 18 9" />
+                  </svg>
+                </button>
+                <div className="nav-dropdown-menu">
+                  {recentlyViewed.length === 0 ? (
+                    <div style={{ padding: "0.75rem 1rem", fontSize: "0.8rem", color: "var(--text-muted)", whiteSpace: "nowrap" }}>
+                      No recently viewed projects
+                    </div>
+                  ) : (
+                    <div style={{ display: "flex", flexDirection: "column", minWidth: "200px" }}>
+                      {recentlyViewed.map((proj) => (
+                        <Link
+                          key={proj.id}
+                          href={`/projects/${proj.id}`}
+                          className="nav-dropdown-link"
+                          onClick={playSynthClick}
+                        >
+                          <div style={{ fontWeight: "600" }}>{proj.name}</div>
+                          <div style={{ fontSize: "0.7rem", color: "var(--text-secondary)" }}>{proj.domain}</div>
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+                </div>
               </li>
             </ul>
           </div>
@@ -279,36 +304,6 @@ export default function Navbar() {
             </div>
           </div>
 
-          {/* Your Skills settings */}
-          <div className="setting-group">
-            <span className="setting-label">Your Tech Skills</span>
-            <div style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(2, 1fr)",
-              gap: "0.5rem",
-              backgroundColor: "var(--bg-color)",
-              border: "1px solid var(--border)",
-              padding: "0.75rem",
-              borderRadius: "var(--radius-md)",
-              maxHeight: "180px",
-              overflowY: "auto"
-            }}>
-              {AVAILABLE_SKILLS.map((skill) => {
-                const checked = userSkills.includes(skill);
-                return (
-                  <label key={skill} style={{ display: "flex", alignItems: "center", gap: "0.4rem", fontSize: "0.85rem", cursor: "pointer" }}>
-                    <input
-                      type="checkbox"
-                      checked={checked}
-                      onChange={() => handleSkillToggle(skill)}
-                      style={{ accentColor: "var(--primary)" }}
-                    />
-                    <span>{skill}</span>
-                  </label>
-                );
-              })}
-            </div>
-          </div>
         </div>
       </div>
     </>

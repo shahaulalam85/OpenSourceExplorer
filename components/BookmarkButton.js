@@ -28,6 +28,25 @@ export default function BookmarkButton({ projectId }) {
     };
   }, [projectId]);
 
+  useEffect(() => {
+    try {
+      const numId = Number(projectId);
+      if (isNaN(numId)) return;
+
+      const saved = localStorage.getItem("recentlyViewed");
+      let list = saved ? JSON.parse(saved) : [];
+
+      list = list.filter((id) => id !== numId);
+      list.unshift(numId);
+      list = list.slice(0, 5);
+
+      localStorage.setItem("recentlyViewed", JSON.stringify(list));
+      window.dispatchEvent(new Event("recentlyViewedChanged"));
+    } catch (e) {
+      console.error("Could not save recently viewed project", e);
+    }
+  }, [projectId]);
+
   const toggleBookmark = (e) => {
     e.preventDefault();
     e.stopPropagation();

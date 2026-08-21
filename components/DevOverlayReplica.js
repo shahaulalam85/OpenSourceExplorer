@@ -15,25 +15,10 @@ export default function DevOverlayReplica() {
 
   // Interactive Sitemap Features
   const [activeTool, setActiveTool] = useState(null);
-  const [userSkills, setUserSkills] = useState([]);
   const [projA, setProjA] = useState(1);
   const [projB, setProjB] = useState(2);
-  const [selectedExplainProj, setSelectedExplainProj] = useState(1);
-  const [explainAnswer, setExplainAnswer] = useState("");
-  const [selectedSumProj, setSelectedSumProj] = useState(1);
-  const [selectedMatchProj, setSelectedMatchProj] = useState(1);
   const [tempSelectedSkills, setTempSelectedSkills] = useState(["React", "TypeScript"]);
-  const [expandedFolders, setExpandedFolders] = useState({
-    toolkit: true,
-    ai: true
-  });
-
-  const toggleFolder = (folder) => {
-    setExpandedFolders(prev => ({
-      ...prev,
-      [folder]: !prev[folder]
-    }));
-  };
+  const [isToolkitExpanded, setIsToolkitExpanded] = useState(true);
 
   useEffect(() => {
     // Render the mock indicator in both development and production for testing
@@ -42,31 +27,6 @@ export default function DevOverlayReplica() {
     // Load initial theme choice
     const savedTheme = localStorage.getItem("prefTheme") || "default";
     setTheme(savedTheme);
-
-    // Load skills
-    const savedSkills = localStorage.getItem("userSkills");
-    if (savedSkills) {
-      try {
-        setUserSkills(JSON.parse(savedSkills));
-      } catch (e) {
-        setUserSkills(["Java", "React", "Spring Boot"]);
-      }
-    } else {
-      setUserSkills(["Java", "React", "Spring Boot"]);
-    }
-
-    const handleSkillsChange = () => {
-      const saved = localStorage.getItem("userSkills");
-      if (saved) {
-        try {
-          setUserSkills(JSON.parse(saved));
-        } catch (e) {}
-      }
-    };
-    window.addEventListener("userSkillsChanged", handleSkillsChange);
-    return () => {
-      window.removeEventListener("userSkillsChanged", handleSkillsChange);
-    };
   }, []);
 
   if (!isProduction) {
@@ -132,12 +92,12 @@ export default function DevOverlayReplica() {
             left: "1.25rem",
             width: "360px",
             maxWidth: "calc(100vw - 2.5rem)",
-            backgroundColor: "#0d0f12",
-            border: "1px solid #2d3139",
+            backgroundColor: "var(--card-bg)",
+            border: "1px solid var(--border)",
             borderRadius: "12px",
-            boxShadow: "0 12px 32px rgba(0, 0, 0, 0.5)",
+            boxShadow: "0 12px 32px rgba(0, 0, 0, 0.3)",
             zIndex: 1000,
-            color: "#fff",
+            color: "var(--text-primary)",
             fontFamily: "var(--font-sans), system-ui, sans-serif",
             animation: "fade-in 0.2s ease-out",
             overflow: "hidden"
@@ -148,9 +108,9 @@ export default function DevOverlayReplica() {
             justifyContent: "space-between",
             alignItems: "center",
             padding: "1rem 1.25rem",
-            borderBottom: "1px solid #1e222b"
+            borderBottom: "1px solid var(--border)"
           }}>
-            <span style={{ fontSize: "0.95rem", fontWeight: "600", color: "#f8fafc", display: "flex", alignItems: "center", gap: "0.4rem" }}>
+            <span style={{ fontSize: "0.95rem", fontWeight: "600", color: "var(--text-primary)", display: "flex", alignItems: "center", gap: "0.4rem" }}>
               🛠️ DevTools Explorer
             </span>
             <button
@@ -177,28 +137,24 @@ export default function DevOverlayReplica() {
 
           {/* Main Sitemap Tree View */}
           {true && (
-            <div style={{ padding: "1.25rem", borderBottom: "1px solid #1e222b", maxHeight: "380px", overflowY: "auto" }}>
-              <div style={{ fontSize: "0.95rem", fontWeight: "600", marginBottom: "1rem", color: "#10b981", display: "flex", alignItems: "center", gap: "0.4rem" }}>
-                <span>🛠️</span> DevTools Explorer & Toolkit
-              </div>
-              
+            <div style={{ padding: "1.25rem", borderBottom: "1px solid var(--border)", maxHeight: "380px", overflowY: "auto" }}>
               <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
                 
                 {/* Developer Toolkit Dropdown Accordion */}
                 <div style={{
-                  backgroundColor: "#161b22",
-                  border: "1px solid #30363d",
+                  backgroundColor: "var(--bg-color)",
+                  border: "1px solid var(--border)",
                   borderRadius: "8px",
                   overflow: "hidden"
                 }}>
-                  <button onClick={() => toggleFolder('toolkit')} style={{
+                  <button onClick={() => setIsToolkitExpanded(!isToolkitExpanded)} style={{
                     display: "flex",
                     justifyContent: "space-between",
                     alignItems: "center",
                     width: "100%",
                     background: "none",
                     border: "none",
-                    color: "#f8fafc",
+                    color: "var(--text-primary)",
                     padding: "0.6rem 0.75rem",
                     fontSize: "0.85rem",
                     fontWeight: "500",
@@ -208,86 +164,54 @@ export default function DevOverlayReplica() {
                     <span style={{ display: "flex", alignItems: "center", gap: "0.6rem" }}>
                       <span>🛠️</span> Developer Toolkit
                     </span>
-                    <span style={{ color: "#8b949e", fontSize: "0.75rem" }}>
-                      {expandedFolders.toolkit ? "▲" : "▼"}
+                    <span style={{ color: "var(--text-secondary)", fontSize: "0.75rem" }}>
+                      {isToolkitExpanded ? "▲" : "▼"}
                     </span>
                   </button>
-                  {expandedFolders.toolkit && (
+                  {isToolkitExpanded && (
                     <div style={{
                       display: "flex",
                       flexDirection: "column",
-                      backgroundColor: "#0d1117",
-                      padding: "0.5rem 0.75rem",
-                      borderTop: "1px solid #30363d",
-                      gap: "0.5rem"
+                      backgroundColor: "var(--card-bg)",
+                      padding: "0.75rem",
+                      borderTop: "1px solid var(--border)",
+                      gap: "0.6rem"
                     }}>
-                      <button onClick={() => setActiveTool('recently-active')} style={{ background: "none", border: "none", color: "#a855f7", textAlign: "left", cursor: "pointer", display: "flex", alignItems: "center", gap: "0.5rem", padding: "0.25rem 0", fontSize: "0.8rem", width: "100%" }}>
-                        <span>🆕</span> Recently Active
+                      <button
+                        onClick={() => setActiveTool('is-project-for-me')}
+                        className="toolkit-card toolkit-card-purple"
+                      >
+                        <div className="toolkit-icon-badge toolkit-icon-purple">🤔</div>
+                        <div className="toolkit-details">
+                          <div className="toolkit-title">Is this Project for me</div>
+                          <div className="toolkit-desc">Scan & match your tech stack with projects.</div>
+                        </div>
+                        <div className="toolkit-arrow">➔</div>
                       </button>
-                      <button onClick={() => setActiveTool('is-project-for-me')} style={{ background: "none", border: "none", color: "#a855f7", textAlign: "left", cursor: "pointer", display: "flex", alignItems: "center", gap: "0.5rem", padding: "0.25rem 0", fontSize: "0.8rem", width: "100%" }}>
-                        <span>🤔</span> Is this Project for me
-                      </button>
-                      <button onClick={() => setActiveTool('compare')} style={{ background: "none", border: "none", color: "#06b6d4", textAlign: "left", cursor: "pointer", display: "flex", alignItems: "center", gap: "0.5rem", padding: "0.25rem 0", fontSize: "0.8rem", width: "100%" }}>
-                        <span>⚔</span> Compare repositories
+
+                      <button
+                        onClick={() => setActiveTool('compare')}
+                        className="toolkit-card toolkit-card-cyan"
+                      >
+                        <div className="toolkit-icon-badge toolkit-icon-cyan">⚔️</div>
+                        <div className="toolkit-details">
+                          <div className="toolkit-title">Compare Repositories</div>
+                          <div className="toolkit-desc">Compare stars, issues, and language metrics.</div>
+                        </div>
+                        <div className="toolkit-arrow">➔</div>
                       </button>
                     </div>
                   )}
                 </div>
 
-                {/* AI Assistant Dropdown Accordion */}
-                <div style={{
-                  backgroundColor: "#161b22",
-                  border: "1px solid #30363d",
-                  borderRadius: "8px",
-                  overflow: "hidden"
-                }}>
-                  <button onClick={() => toggleFolder('ai')} style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    width: "100%",
-                    background: "none",
-                    border: "none",
-                    color: "#f8fafc",
-                    padding: "0.6rem 0.75rem",
-                    fontSize: "0.85rem",
-                    fontWeight: "500",
-                    cursor: "pointer",
-                    textAlign: "left"
-                  }}>
-                    <span style={{ display: "flex", alignItems: "center", gap: "0.6rem" }}>
-                      <span>🤖</span> AI Assistant
-                    </span>
-                    <span style={{ color: "#8b949e", fontSize: "0.75rem" }}>
-                      {expandedFolders.ai ? "▲" : "▼"}
-                    </span>
-                  </button>
-                  {expandedFolders.ai && (
-                    <div style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      backgroundColor: "#0d1117",
-                      padding: "0.5rem 0.75rem",
-                      borderTop: "1px solid #30363d",
-                      gap: "0.5rem"
-                    }}>
-                      <button onClick={() => setActiveTool('ai-explain')} style={{ background: "none", border: "none", color: "#3b82f6", textAlign: "left", cursor: "pointer", display: "flex", alignItems: "center", gap: "0.5rem", padding: "0.25rem 0", fontSize: "0.8rem", width: "100%" }}>
-                        <span>📝</span> Explain Repository
-                      </button>
 
-                      <button onClick={() => setActiveTool('ai-summarize')} style={{ background: "none", border: "none", color: "#3b82f6", textAlign: "left", cursor: "pointer", display: "flex", alignItems: "center", gap: "0.5rem", padding: "0.25rem 0", fontSize: "0.8rem", width: "100%" }}>
-                        <span>📊</span> Summarize Repository
-                      </button>
-                    </div>
-                  )}
-                </div>
 
               </div>
             </div>
           )}
 
           {/* Theme Selection at the bottom of the Dialog */}
-          <div style={{ padding: "1.25rem", backgroundColor: "#0b0c0f" }}>
+          <div style={{ padding: "1.25rem", backgroundColor: "var(--card-hover)" }}>
             <div style={{
               display: "flex",
               justifyContent: "space-between",
@@ -296,7 +220,7 @@ export default function DevOverlayReplica() {
             }}>
               <div style={{ flex: 1 }}>
                 <div style={{ fontSize: "0.95rem", fontWeight: "600", marginBottom: "0.2rem" }}>Theme</div>
-                <div style={{ fontSize: "0.8rem", color: "#94a3b8" }}>Select your theme preference.</div>
+                <div style={{ fontSize: "0.8rem", color: "var(--text-secondary)" }}>Select your theme preference.</div>
               </div>
               
               {/* Custom Select dropdown */}
@@ -306,10 +230,10 @@ export default function DevOverlayReplica() {
                   onChange={handleThemeChange}
                   style={{
                     appearance: "none",
-                    backgroundColor: "#161b22",
-                    border: "1px solid #30363d",
+                    backgroundColor: "var(--bg-color)",
+                    border: "1px solid var(--border)",
                     borderRadius: "6px",
-                    color: "#fff",
+                    color: "var(--text-primary)",
                     fontSize: "0.85rem",
                     padding: "0.4rem 2rem 0.4rem 0.75rem",
                     fontWeight: "500",
@@ -358,13 +282,13 @@ export default function DevOverlayReplica() {
           animation: "fade-in 0.2s ease-out"
         }}>
           <div style={{
-            width: "680px",
+            width: "900px",
             maxWidth: "94vw",
-            backgroundColor: "#0d0f12",
-            border: "1px solid #2d3139",
+            backgroundColor: "var(--card-bg)",
+            border: "1px solid var(--border)",
             borderRadius: "12px",
-            boxShadow: "0 24px 64px rgba(0, 0, 0, 0.7)",
-            color: "#fff",
+            boxShadow: "0 24px 64px rgba(0, 0, 0, 0.4)",
+            color: "var(--text-primary)",
             fontFamily: "var(--font-sans), system-ui, sans-serif",
             overflow: "hidden"
           }}>
@@ -374,10 +298,10 @@ export default function DevOverlayReplica() {
               justifyContent: "space-between",
               alignItems: "center",
               padding: "1rem 1.25rem",
-              borderBottom: "1px solid #1e222b",
-              backgroundColor: "#161b22"
+              borderBottom: "1px solid var(--border)",
+              backgroundColor: "var(--card-hover)"
             }}>
-              <span style={{ fontSize: "1rem", fontWeight: "700", color: "#f8fafc", display: "flex", alignItems: "center", gap: "0.5rem" }}>
+              <span style={{ fontSize: "1rem", fontWeight: "700", color: "var(--text-primary)", display: "flex", alignItems: "center", gap: "0.5rem" }}>
                 ⚙️ {(() => {
                   if (activeTool === "is-project-for-me") return "Is this Project for me";
                   if (activeTool === "find-project") return "Find your next project";
@@ -412,7 +336,7 @@ export default function DevOverlayReplica() {
             </div>
 
             {/* Pop-up Body / Tool Content */}
-            <div style={{ padding: "0.5rem", maxHeight: "80vh", overflowY: "auto" }}>
+            <div style={{ padding: "0.5rem", maxHeight: "90vh", overflowY: "auto" }}>
               {/* 1. Is This Project For Me Tool */}
               {activeTool === "is-project-for-me" && (
                 <div style={{ padding: "1.25rem" }}>
@@ -425,11 +349,11 @@ export default function DevOverlayReplica() {
                     display: "grid",
                     gridTemplateColumns: "repeat(3, 1fr)",
                     gap: "0.4rem",
-                    backgroundColor: "#161b22",
-                    border: "1px solid #30363d",
+                    backgroundColor: "var(--bg-color)",
+                    border: "1px solid var(--border)",
                     padding: "0.6rem",
                     borderRadius: "8px",
-                    maxHeight: "130px",
+                    maxHeight: "180px",
                     overflowY: "auto",
                     marginBottom: "1rem"
                   }}>
@@ -446,9 +370,9 @@ export default function DevOverlayReplica() {
                             }
                           }}
                           style={{
-                            backgroundColor: isSelected ? "#10b981" : "#21262d",
-                            border: isSelected ? "1px solid #10b981" : "1px solid #30363d",
-                            color: isSelected ? "#fff" : "#c9d1d9",
+                            backgroundColor: isSelected ? "#10b981" : "var(--card-hover)",
+                            border: isSelected ? "1px solid #10b981" : "1px solid var(--border)",
+                            color: isSelected ? "#fff" : "var(--text-primary)",
                             borderRadius: "4px",
                             fontSize: "0.7rem",
                             padding: "4px",
@@ -492,19 +416,19 @@ export default function DevOverlayReplica() {
                     }
 
                     return (
-                      <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem", maxHeight: "180px", overflowY: "auto" }}>
-                        {suggestions.slice(0, 4).map(({ project: p, score }) => (
-                          <div key={p.id} style={{ backgroundColor: "#161b22", border: "1px solid #30363d", padding: "0.6rem 0.75rem", borderRadius: "8px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                      <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem", maxHeight: "450px", overflowY: "auto" }}>
+                        {suggestions.slice(0, 10).map(({ project: p, score }) => (
+                          <div key={p.id} style={{ backgroundColor: "var(--bg-color)", border: "1px solid var(--border)", padding: "0.6rem 0.75rem", borderRadius: "8px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                             <div style={{ flex: 1, marginRight: "0.5rem" }}>
                               <div style={{ display: "flex", alignItems: "center", gap: "0.4rem" }}>
                                 <a href={`/projects/${p.id}`} onClick={() => { setIsOpen(false); setActiveTool(null); }} style={{ color: "#58a6ff", fontWeight: "600", textDecoration: "none", fontSize: "0.85rem" }}>
                                   {p.name}
                                 </a>
-                                <span style={{ fontSize: "0.7rem", color: "#8b949e", backgroundColor: "#21262d", padding: "1px 4px", borderRadius: "3px" }}>
+                                <span style={{ fontSize: "0.7rem", color: "var(--text-secondary)", backgroundColor: "var(--card-hover)", padding: "1px 4px", borderRadius: "3px" }}>
                                   {p.difficulty}
                                 </span>
                               </div>
-                              <div style={{ fontSize: "0.7rem", color: "#8b949e", marginTop: "2px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: "180px" }}>
+                              <div style={{ fontSize: "0.7rem", color: "var(--text-muted)", marginTop: "2px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: "180px" }}>
                                 {p.technologies.slice(0, 3).join(", ")}
                               </div>
                             </div>
@@ -560,42 +484,21 @@ export default function DevOverlayReplica() {
                 </div>
               )}
 
-              {/* 3. Recently Active Tool */}
-              {activeTool === "recently-active" && (
-                <div style={{ padding: "1.25rem" }}>
-                  <p style={{ fontSize: "0.85rem", color: "#94a3b8", marginBottom: "1rem" }}>Simulation of recent git activities:</p>
-                  <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
-                    {[
-                      { project: "Next.js", action: "Merged PR #6849: Fix hydration error in routing", time: "12m ago" },
-                      { project: "React", action: "Closed issue #28402: SyntheticEvent pooling cleanup", time: "1h ago" },
-                      { project: "Kubernetes", action: "Pushed 5 commits to main branch", time: "3h ago" },
-                      { project: "Flutter", action: "Released version 3.24.1 stable build", time: "5h ago" }
-                    ].map((ev, i) => (
-                      <div key={i} style={{ borderBottom: "1px solid #1e222b", paddingBottom: "0.5rem" }}>
-                        <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.85rem", marginBottom: "2px" }}>
-                          <strong style={{ color: "#58a6ff" }}>{ev.project}</strong>
-                          <span style={{ fontSize: "0.75rem", color: "#8b949e" }}>{ev.time}</span>
-                        </div>
-                        <div style={{ fontSize: "0.8rem", color: "#c9d1d9" }}>{ev.action}</div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
+
 
               {/* 4. Compare Repositories Tool */}
               {activeTool === "compare" && (
                 <div style={{ padding: "1.25rem" }}>
                   <div style={{ display: "flex", gap: "0.5rem", marginBottom: "1rem" }}>
                     <div style={{ flex: 1 }}>
-                      <label style={{ fontSize: "0.75rem", color: "#8b949e", display: "block", marginBottom: "4px" }}>Project A</label>
-                      <select value={projA} onChange={(e) => setProjA(Number(e.target.value))} style={{ width: "100%", backgroundColor: "#161b22", border: "1px solid #30363d", borderRadius: "6px", color: "#fff", fontSize: "0.8rem", padding: "4px" }}>
+                      <label style={{ fontSize: "0.75rem", color: "var(--text-secondary)", display: "block", marginBottom: "4px" }}>Project A</label>
+                      <select value={projA} onChange={(e) => setProjA(Number(e.target.value))} style={{ width: "100%", backgroundColor: "var(--bg-color)", border: "1px solid var(--border)", borderRadius: "6px", color: "var(--text-primary)", fontSize: "0.8rem", padding: "4px", outline: "none" }}>
                         {projects.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
                       </select>
                     </div>
                     <div style={{ flex: 1 }}>
-                      <label style={{ fontSize: "0.75rem", color: "#8b949e", display: "block", marginBottom: "4px" }}>Project B</label>
-                      <select value={projB} onChange={(e) => setProjB(Number(e.target.value))} style={{ width: "100%", backgroundColor: "#161b22", border: "1px solid #30363d", borderRadius: "6px", color: "#fff", fontSize: "0.8rem", padding: "4px" }}>
+                      <label style={{ fontSize: "0.75rem", color: "var(--text-secondary)", display: "block", marginBottom: "4px" }}>Project B</label>
+                      <select value={projB} onChange={(e) => setProjB(Number(e.target.value))} style={{ width: "100%", backgroundColor: "var(--bg-color)", border: "1px solid var(--border)", borderRadius: "6px", color: "var(--text-primary)", fontSize: "0.8rem", padding: "4px", outline: "none" }}>
                         {projects.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
                       </select>
                     </div>
@@ -604,40 +507,33 @@ export default function DevOverlayReplica() {
                     const a = projects.find(p => p.id === projA);
                     const b = projects.find(p => p.id === projB);
                     if (!a || !b) return null;
-                    const getMatchPct = (p) => {
-                      const m = userSkills.filter(skill => p.technologies.some(t => t.toLowerCase() === skill.toLowerCase()) || p.language.toLowerCase() === skill.toLowerCase()).length;
-                      return userSkills.length ? Math.min(Math.round(45 + (m / userSkills.length) * 40 + 15), 100) : 0;
-                    };
+
                     return (
-                      <table style={{ width: "100%", fontSize: "0.8rem", color: "#c9d1d9", borderCollapse: "collapse" }}>
+                      <table style={{ width: "100%", fontSize: "0.8rem", color: "var(--text-primary)", borderCollapse: "collapse" }}>
                         <thead>
-                          <tr style={{ borderBottom: "1px solid #30363d" }}>
-                            <th style={{ textAlign: "left", padding: "4px 0", color: "#8b949e" }}>Metric</th>
+                          <tr style={{ borderBottom: "1px solid var(--border)" }}>
+                            <th style={{ textAlign: "left", padding: "4px 0", color: "var(--text-secondary)" }}>Metric</th>
                             <th style={{ textAlign: "right", padding: "4px 0", color: "#58a6ff" }}>{a.name}</th>
                             <th style={{ textAlign: "right", padding: "4px 0", color: "#58a6ff" }}>{b.name}</th>
                           </tr>
                         </thead>
                         <tbody>
-                          <tr style={{ borderBottom: "1px solid #21262d" }}>
+                          <tr style={{ borderBottom: "1px solid var(--border)" }}>
                             <td style={{ padding: "6px 0" }}>⭐ Stars</td>
                             <td style={{ textAlign: "right" }}>{(a.stars / 1000).toFixed(0)}k</td>
                             <td style={{ textAlign: "right" }}>{(b.stars / 1000).toFixed(0)}k</td>
                           </tr>
-                          <tr style={{ borderBottom: "1px solid #21262d" }}>
+                          <tr style={{ borderBottom: "1px solid var(--border)" }}>
                             <td style={{ padding: "6px 0" }}>💻 Language</td>
                             <td style={{ textAlign: "right" }}>{a.language}</td>
                             <td style={{ textAlign: "right" }}>{b.language}</td>
                           </tr>
-                          <tr style={{ borderBottom: "1px solid #21262d" }}>
+                          <tr style={{ borderBottom: "1px solid var(--border)" }}>
                             <td style={{ padding: "6px 0" }}>🐛 Issues</td>
                             <td style={{ textAlign: "right" }}>{a.issues}</td>
                             <td style={{ textAlign: "right" }}>{b.issues}</td>
                           </tr>
-                          <tr style={{ borderBottom: "1px solid #21262d" }}>
-                            <td style={{ padding: "6px 0" }}>🎯 Match</td>
-                            <td style={{ textAlign: "right", color: "#10b981", fontWeight: "bold" }}>{getMatchPct(a)}%</td>
-                            <td style={{ textAlign: "right", color: "#10b981", fontWeight: "bold" }}>{getMatchPct(b)}%</td>
-                          </tr>
+
                           <tr>
                             <td style={{ padding: "6px 0" }}>🔗 Action</td>
                             <td style={{ textAlign: "right" }}>
@@ -654,62 +550,7 @@ export default function DevOverlayReplica() {
                 </div>
               )}
 
-              {/* 5. Explain Repository Tool */}
-              {activeTool === "ai-explain" && (
-                <div style={{ padding: "1.25rem" }}>
-                  <div style={{ marginBottom: "0.75rem" }}>
-                    <label style={{ fontSize: "0.75rem", color: "#8b949e", display: "block", marginBottom: "4px" }}>Select Repository</label>
-                    <select value={selectedExplainProj} onChange={(e) => {
-                      setSelectedExplainProj(Number(e.target.value));
-                      setExplainAnswer("");
-                    }} style={{ width: "100%", backgroundColor: "#161b22", border: "1px solid #30363d", borderRadius: "6px", color: "#fff", fontSize: "0.8rem", padding: "6px" }}>
-                      {projects.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
-                    </select>
-                  </div>
-                  <div style={{ display: "flex", gap: "0.5rem", marginBottom: "1rem" }}>
-                    <button onClick={() => {
-                      const p = projects.find(x => x.id === selectedExplainProj);
-                      setExplainAnswer(p ? p.description : "No description found.");
-                    }} style={{ flex: 1, backgroundColor: "#21262d", border: "1px solid #30363d", color: "#c9d1d9", padding: "6px", borderRadius: "4px", fontSize: "0.75rem", cursor: "pointer" }}>
-                      Describe Project
-                    </button>
-                    <button onClick={() => {
-                      const p = projects.find(x => x.id === selectedExplainProj);
-                      setExplainAnswer(`Primary technologies are: ${p.technologies.join(", ")}. Licensed under ${p.license}.`);
-                    }} style={{ flex: 1, backgroundColor: "#21262d", border: "1px solid #30363d", color: "#c9d1d9", padding: "6px", borderRadius: "4px", fontSize: "0.75rem", cursor: "pointer" }}>
-                      Tech Stack
-                    </button>
-                  </div>
-                  {explainAnswer && (
-                    <div style={{ backgroundColor: "#161b22", border: "1px solid #30363d", padding: "8px", borderRadius: "6px", fontSize: "0.8rem", color: "#cbd5e1", minHeight: "60px", maxHeight: "120px", overflowY: "auto" }}>
-                      {explainAnswer}
-                    </div>
-                  )}
-                </div>
-              )}
 
-              {/* 7. Summarize Repository Tool */}
-              {activeTool === "ai-summarize" && (
-                <div style={{ padding: "1.25rem" }}>
-                  <div style={{ marginBottom: "0.75rem" }}>
-                    <label style={{ fontSize: "0.75rem", color: "#8b949e", display: "block", marginBottom: "4px" }}>Select Repository</label>
-                    <select value={selectedSumProj} onChange={(e) => setSelectedSumProj(Number(e.target.value))} style={{ width: "100%", backgroundColor: "#161b22", border: "1px solid #30363d", borderRadius: "6px", color: "#fff", fontSize: "0.8rem", padding: "6px" }}>
-                      {projects.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
-                    </select>
-                  </div>
-                  {(() => {
-                    const p = projects.find(x => x.id === selectedSumProj);
-                    if (!p) return null;
-                    return (
-                      <ul style={{ paddingLeft: "1.2rem", fontSize: "0.8rem", color: "#cbd5e1", display: "flex", flexDirection: "column", gap: "0.4rem" }}>
-                        <li><strong>Category:</strong> Curated under {p.domain}</li>
-                        <li><strong>Popularity:</strong> Starred by over {(p.stars/1000).toFixed(0)}k users with {p.issues} open issues.</li>
-                        <li><strong>Tech Stack:</strong> Heavy reliance on {p.language} with frameworks: {p.technologies.slice(0, 3).join(", ")}.</li>
-                      </ul>
-                    );
-                  })()}
-                </div>
-              )}
 
             </div>
           </div>
