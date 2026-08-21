@@ -88,7 +88,7 @@ OpenSourceProject/
 ## 🌐 Live Demo
 
 You can view the live deployment of this project on Vercel here:
-[👉 OpenSource Project Explorer - Live Demo](https://opensource-project-explorer.vercel.app/)
+[👉 OpenSource Project Explorer - Live Demo](https://open-source-explorer-ten.vercel.app/)
 
 ---
 
