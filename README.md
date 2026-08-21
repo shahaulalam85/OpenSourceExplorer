@@ -1,25 +1,53 @@
 # Open Source Project Explorer
 
-Open Source Project Explorer is a responsive, feature-rich web application built with **Next.js 16 (App Router)** and **React 19** designed to help developers find and track open-source projects. Developers can discover repositories filtered by tech domains, coding difficulty, and technology tags, with bookmarking supported via local persistence.
+## ℹ️ About
+
+Open Source Project Explorer is a premium, responsive web application designed to help developers search, discover, and track open-source projects. It aggregates repository attributes (stars, open issues, language, and custom technology stacks) and parses them into a highly interactive, unified developer portal.
 
 ---
 
-## 🚀 Key Features
+## 🚀 Features
 
-* **Home Dashboard**: Offers dynamic, programmatically derived repository statistics, featured repositories sorted by stars, and browse-by-category cards.
-* **Multi-Criteria Filter & Search**: Supports live search matching name, description, language, or technology tag. Filters include Domain selection tabs, a Difficulty dropdown, and a "Beginner Friendly" indicator checkbox.
-* **Reactive Bookmarking**: Persists user bookmarks inside browser `localStorage`. Uses custom browser window events to synchronize saved lists across different pages instantly.
-* **Presenter Saved Layout**: The `/saved` path renders saved cards with specialized layout actions: `[View Details]` (redirect to detail page) and `[Remove]` (remove from shortlist immediately).
-* **Tag-Click Redirection**: Clicking a technology tag on any project card dynamically populates the search bar to filter the catalog.
-* **Static Generation Details Route (`/projects/[id]`)**: Auto-generates static details pages at build-time using `generateStaticParams()` for high SEO scoring and immediate loading.
-* **Premium Theme Styling**: Structured entirely with vanilla CSS variables (no external CSS libraries) showcasing custom scrollbars, emerald accents on dark slate backgrounds, and micro-interaction hover scaling.
+* **Advanced Search & Multi-Filter Catalog**: Users can filter repositories by tech domains (Web, AI/ML, Backend, DevOps, Systems, Mobile), programming difficulty, and toggle "Beginner Friendly Only" tags.
+* **Tech Stack Breakdown**: Programmatically visualizes exact technology usage percentages and activity indicators for each repository.
+* **Interactive Developer Toolkit (DevTools)**:
+  * **Is this Project for me?**: Input custom tech stacks to dynamically match compatibility with catalog items.
+  * **Compare Repositories**: Align two repositories side-by-side to compare stars, open issues, languages, and action links.
+* **Custom Theme Controller**: Easily switch between Minimalist Light, Classic Dark, Cyberpunk, and Oceanic Deep themes with real-time UI synchronization.
+* **Recently Viewed Dropdown**: Keeps track of the last 5 visited project detail pages and lists them dynamically in the navigation header.
+* **Reactive Bookmarking**: Save and persist bookmarked repositories locally. Use custom browser window event listeners to synchronize bookmark badges across pages.
+* **Static Site Generation (SSG)**: Fast-loading static project detail pages auto-generated at build-time using `generateStaticParams`.
+
+---
+
+## 📸 Application Screenshots
+
+### 🖥️ Discover Dashboard (Home)
+
+![Home Page 1](public/screenshots/homepage1.png)
+
+![Home Page 2](public/screenshots/homepage2.png)
+
+### 📂 Dynamic Project Details
+
+![Project Catalog](public/screenshots/projectCatalog.png)
+
+![Saved Projects](public/screenshots/savedProject.png)
+
+![Project Details](public/screenshots/insideCard.png)
+
+### 🛠️ Interactive DevTools Drawer
+
+![Developer Toolkit](public/screenshots/preferences.png)
+
+![Project Matching](public/screenshots/findmyproject.png)
 
 ---
 
 ## 🛠️ Technology Stack
 
 * **Core Framework**: Next.js 16 (App Router)
-* **Library**: React 19
+* **View Library**: React 19
 * **Styling**: Vanilla CSS3 Custom Properties (CSS variables)
 * **Persistence**: Web Storage API (`localStorage`)
 * **Package Manager**: npm
@@ -47,11 +75,20 @@ OpenSourceProject/
 │   ├── ProjectExplorer.js    # Multi-filter search control panel
 │   └── BookmarkButton.js     # React client bookmark state toggle
 ├── lib/
-│   └── projects.js           # Shared mock database of 10 repositories
+│   └── projects.js           # Shared database of open source repositories
+├── public/
+│   └── screenshots/          # Application screenshot images
 ├── jsconfig.json             # Absolute path mapping (@/* -> ./*)
 ├── package.json              # Dependency declarations
 └── README.md                 # Project documentation
 ```
+
+---
+
+## 🌐 Live Demo
+
+You can view the live deployment of this project on Vercel here:
+[👉 OpenSource Project Explorer - Live Demo](https://opensource-project-explorer.vercel.app/)
 
 ---
 
@@ -78,4 +115,12 @@ npm run build
 npm run start
 ```
 
+---
 
+## 💡 What I Learned
+
+During the design and construction of this application, I acquired and refined several core web engineering concepts:
+* **React 19 & Next.js 16 Routing**: Learned how to build server-side rendered structures combined with client-side interactive slots, using static path pre-generation (`generateStaticParams`) for fast load times.
+* **Vanilla CSS Customization**: Styled the entire application from scratch with raw CSS custom variables, implementing modern dark/light/cyberpunk/oceanic themes without relying on heavy utility frameworks like Tailwind CSS.
+* **Component Communication via DOM Events**: Synchronized state across decoupled React components (such as Navbar bookmarks and detail pages) using custom global `window.dispatchEvent` events rather than heavy state-management libraries.
+* **Local Persistence Workflows**: Integrated `localStorage` parsing pipelines to save themes, bookmarks, goal trackers, and recently viewed project history directly in the browser.
