@@ -274,9 +274,7 @@ export default function DevOverlayReplica() {
                       <button onClick={() => setActiveTool('ai-explain')} style={{ background: "none", border: "none", color: "#3b82f6", textAlign: "left", cursor: "pointer", display: "flex", alignItems: "center", gap: "0.5rem", padding: "0.25rem 0", fontSize: "0.8rem", width: "100%" }}>
                         <span>📝</span> Explain Repository
                       </button>
-                      <button onClick={() => setActiveTool('ai-recommend')} style={{ background: "none", border: "none", color: "#3b82f6", textAlign: "left", cursor: "pointer", display: "flex", alignItems: "center", gap: "0.5rem", padding: "0.25rem 0", fontSize: "0.8rem", width: "100%" }}>
-                        <span>💡</span> Recommend Projects
-                      </button>
+
                       <button onClick={() => setActiveTool('ai-summarize')} style={{ background: "none", border: "none", color: "#3b82f6", textAlign: "left", cursor: "pointer", display: "flex", alignItems: "center", gap: "0.5rem", padding: "0.25rem 0", fontSize: "0.8rem", width: "100%" }}>
                         <span>📊</span> Summarize Repository
                       </button>
@@ -687,32 +685,6 @@ export default function DevOverlayReplica() {
                       {explainAnswer}
                     </div>
                   )}
-                </div>
-              )}
-
-              {/* 6. Recommend Projects Tool */}
-              {activeTool === "ai-recommend" && (
-                <div style={{ padding: "1.25rem" }}>
-                  <p style={{ fontSize: "0.85rem", color: "#94a3b8", marginBottom: "0.75rem" }}>Top matching repositories for your stack:</p>
-                  <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
-                    {(() => {
-                      const scored = projects.map(p => {
-                        const m = userSkills.filter(skill => p.technologies.some(t => t.toLowerCase() === skill.toLowerCase()) || p.language.toLowerCase() === skill.toLowerCase()).length;
-                        const score = userSkills.length ? Math.min(Math.round(45 + (m / userSkills.length) * 40 + 15), 100) : 0;
-                        return { p, score };
-                      }).sort((x, y) => y.score - x.score).slice(0, 2);
-                      
-                      return scored.map(({ p, score }) => (
-                        <div key={p.id} style={{ backgroundColor: "#161b22", border: "1px solid #30363d", padding: "8px", borderRadius: "6px" }}>
-                          <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.85rem", fontWeight: "600", marginBottom: "4px" }}>
-                            <span style={{ color: "#10b981" }}>{p.name}</span>
-                            <span style={{ color: "#10b981" }}>{score}% Match</span>
-                          </div>
-                          <div style={{ fontSize: "0.75rem", color: "#8b949e" }}>Recommended because it uses {p.language} and matches your interest.</div>
-                        </div>
-                      ));
-                    })()}
-                  </div>
                 </div>
               )}
 
