@@ -9,6 +9,87 @@ export async function generateStaticParams() {
   }));
 }
 
+function getMockTechStack(project) {
+  const langConfig = {
+    TypeScript: { emoji: "🟦", color: "#3178c6" },
+    JavaScript: { emoji: "🟨", color: "#f1e05a" },
+    Python: { emoji: "🐍", color: "#3572A5" },
+    Go: { emoji: "🐹", color: "#00ADD8" },
+    Rust: { emoji: "🦀", color: "#dee5e6" },
+    Dart: { emoji: "🎯", color: "#00B4AB" },
+    Swift: { emoji: "🍎", color: "#F05138" },
+    "C++": { emoji: "🇨", color: "#f34b7d" },
+    Java: { emoji: "☕", color: "#b07219" },
+    HTML: { emoji: "📄", color: "#e34c26" },
+    CSS: { emoji: "🎨", color: "#563d7c" },
+    YAML: { emoji: "⚙️", color: "#cb171e" },
+    Shell: { emoji: "🐚", color: "#89e051" },
+    CUDA: { emoji: "⚡", color: "#76b900" },
+    "React Native": { emoji: "📱", color: "#61dafb" },
+    React: { emoji: "⚛️", color: "#61dafb" },
+    "Next.js": { emoji: "▲", color: "#f8fafc" },
+    "Node.js": { emoji: "🟢", color: "#339933" },
+    Webpack: { emoji: "📦", color: "#8dd6f9" },
+    Electron: { emoji: "⚛️", color: "#47848F" },
+    Svelte: { emoji: "🔥", color: "#ff3e00" },
+    Flutter: { emoji: "🐦", color: "#02569B" },
+    Skia: { emoji: "🎨", color: "#ff3e00" },
+    Android: { emoji: "🤖", color: "#3DDC84" },
+    iOS: { emoji: "🍎", color: "#A2AAAD" },
+    "Objective-C": { emoji: "🇴", color: "#438eff" },
+    Linux: { emoji: "🐧", color: "#FCC624" },
+    Docker: { emoji: "🐳", color: "#2496ed" },
+    Kubernetes: { emoji: "☸️", color: "#326ce5" },
+    Containerd: { emoji: "📦", color: "#57068c" }
+  };
+
+  const techs = project.technologies;
+  const count = techs.length;
+  if (count === 0) return [];
+
+  const stack = [];
+  const primaryPct = Math.max(Math.floor(100 / count) + 20, 40); 
+  let remaining = 100 - primaryPct;
+
+  const getTechConfig = (name) => {
+    if (langConfig[name]) return langConfig[name];
+    const foundKey = Object.keys(langConfig).find(k => k.toLowerCase() === name.toLowerCase());
+    if (foundKey) return langConfig[foundKey];
+    
+    let hash = 0;
+    for (let i = 0; i < name.length; i++) {
+      hash = name.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    const color = `hsl(${Math.abs(hash) % 360}, 65%, 55%)`;
+    return { emoji: "🔧", color };
+  };
+
+  const firstConfig = getTechConfig(techs[0]);
+  stack.push({
+    name: techs[0],
+    percentage: count === 1 ? 100 : primaryPct,
+    emoji: firstConfig.emoji,
+    color: firstConfig.color
+  });
+
+  if (count > 1) {
+    const share = Math.floor(remaining / (count - 1));
+    for (let i = 1; i < count; i++) {
+      const config = getTechConfig(techs[i]);
+      const pct = (i === count - 1) ? remaining : share;
+      stack.push({
+        name: techs[i],
+        percentage: pct,
+        emoji: config.emoji,
+        color: config.color
+      });
+      remaining -= share;
+    }
+  }
+
+  return stack.sort((a, b) => b.percentage - a.percentage);
+}
+
 export default async function ProjectDetailPage({ params }) {
   const resolvedParams = await params;
   const project = getProject(resolvedParams.id);
@@ -16,6 +97,8 @@ export default async function ProjectDetailPage({ params }) {
   if (!project) {
     notFound();
   }
+
+  const techStack = getMockTechStack(project);
 
   const {
     id,
@@ -191,6 +274,56 @@ export default async function ProjectDetailPage({ params }) {
                 </svg>
                 View on GitHub
               </a>
+            </div>
+          </div>
+
+          {/* Technology Stack Card */}
+          <div className="sidebar-card" style={{ marginTop: "1.5rem" }}>
+            <h3 style={{ fontSize: "1.1rem", marginBottom: "1rem" }}>
+              Technology Stack
+            </h3>
+            
+            {/* Visual colored bar representing percentages */}
+            <div style={{
+              display: "flex",
+              height: "8px",
+              borderRadius: "4px",
+              overflow: "hidden",
+              marginBottom: "1.25rem",
+              backgroundColor: "#21262d"
+            }}>
+              {techStack.map((item) => (
+                <div
+                  key={item.name}
+                  style={{
+                    width: `${item.percentage}%`,
+                    backgroundColor: item.color,
+                    height: "100%"
+                  }}
+                  title={`${item.name}: ${item.percentage}%`}
+                />
+              ))}
+            </div>
+
+            <div style={{ display: "flex", flexDirection: "column", gap: "0.6rem" }}>
+              {techStack.map((item) => (
+                <div
+                  key={item.name}
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    fontSize: "0.85rem",
+                    color: "var(--text-secondary)"
+                  }}
+                >
+                  <span style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                    <span>{item.emoji}</span>
+                    <span style={{ fontWeight: "500", color: "var(--text-primary)" }}>{item.name}</span>
+                  </span>
+                  <span style={{ fontWeight: "600" }}>{item.percentage}%</span>
+                </div>
+              ))}
             </div>
           </div>
         </aside>
