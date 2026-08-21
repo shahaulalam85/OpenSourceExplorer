@@ -16,6 +16,7 @@ export default function DevOverlayReplica() {
   const [selectedExplainProj, setSelectedExplainProj] = useState(1);
   const [explainAnswer, setExplainAnswer] = useState("");
   const [selectedSumProj, setSelectedSumProj] = useState(1);
+  const [selectedMatchProj, setSelectedMatchProj] = useState(1);
   const [expandedFolders, setExpandedFolders] = useState({
     toolkit: true,
     ai: true
@@ -197,69 +198,71 @@ export default function DevOverlayReplica() {
             </div>
           )}
 
-          {/* 1. Find My Project Tool */}
-          {activeTool === "find-project" && (
+          {/* 1. Is This Project For Me Tool */}
+          {activeTool === "is-project-for-me" && (
             <div style={{ padding: "1.25rem", borderBottom: "1px solid #1e222b" }}>
-              <div style={{ fontSize: "1.05rem", fontWeight: "700", marginBottom: "0.5rem" }}>🎯 Find My Project</div>
-              <p style={{ fontSize: "0.85rem", color: "#94a3b8", marginBottom: "1rem" }}>
-                Scanning all repositories matching your stack: <strong>{userSkills.join(", ")}</strong>
-              </p>
+              <div style={{ fontSize: "1.05rem", fontWeight: "700", marginBottom: "0.5rem" }}>🤔 Is this Project for me</div>
+              <div style={{ marginBottom: "0.75rem" }}>
+                <label style={{ fontSize: "0.75rem", color: "#8b949e", display: "block", marginBottom: "4px" }}>Select Repository</label>
+                <select value={selectedMatchProj} onChange={(e) => setSelectedMatchProj(Number(e.target.value))} style={{ width: "100%", backgroundColor: "#161b22", border: "1px solid #30363d", borderRadius: "6px", color: "#fff", fontSize: "0.8rem", padding: "6px" }}>
+                  {projects.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
+                </select>
+              </div>
+
               {(() => {
-                let best = null;
-                let highest = 0;
-                projects.forEach((p) => {
-                  const matches = userSkills.filter(skill => 
-                    p.technologies.some(t => t.toLowerCase() === skill.toLowerCase()) ||
-                    p.language.toLowerCase() === skill.toLowerCase()
-                  ).length;
-                  const matchPct = userSkills.length ? Math.round(45 + (matches / userSkills.length) * 40 + 15) : 0;
-                  const finalPct = Math.min(matchPct, 100);
-                  if (finalPct > highest) {
-                    highest = finalPct;
-                    best = p;
-                  }
+                const p = projects.find(x => x.id === selectedMatchProj);
+                if (!p) return null;
+                
+                const skillMatches = userSkills.map((skill) => {
+                  const isTechMatch = p.technologies.some(
+                    (tech) => tech.toLowerCase() === skill.toLowerCase()
+                  );
+                  const isLangMatch = p.language.toLowerCase() === skill.toLowerCase();
+                  return {
+                    name: skill,
+                    matched: isTechMatch || isLangMatch
+                  };
                 });
-                return best ? (
-                  <div style={{ backgroundColor: "#161b22", border: "1px solid #30363d", padding: "1rem", borderRadius: "8px" }}>
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.5rem" }}>
-                      <span style={{ fontWeight: "600", fontSize: "0.95rem", color: "#10b981" }}>{best.name}</span>
-                      <span style={{ fontSize: "0.85rem", fontWeight: "700", color: "#10b981", backgroundColor: "rgba(16, 185, 129, 0.15)", padding: "2px 6px", borderRadius: "4px" }}>
-                        {highest}% Match
-                      </span>
+
+                const matchedCount = skillMatches.filter((s) => s.matched).length;
+                let matchPct = 0;
+                if (matchedCount > 0 && userSkills.length > 0) {
+                  matchPct = Math.round(45 + (matchedCount / userSkills.length) * 40 + 15);
+                }
+                matchPct = Math.min(matchPct, 100);
+
+                return (
+                  <div style={{ backgroundColor: "#161b22", border: "1px solid #30363d", padding: "1rem", borderRadius: "8px", marginTop: "1rem" }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.75rem" }}>
+                      <span style={{ fontWeight: "700", fontSize: "0.95rem" }}>Repository Match</span>
+                      <span style={{ fontSize: "1rem", fontWeight: "800", color: "#10b981" }}>{matchPct}%</span>
                     </div>
-                    <div style={{ fontSize: "0.8rem", color: "#8b949e", marginBottom: "0.75rem" }}>{best.description}</div>
-                    <a href={`/projects/${best.id}`} onClick={() => setIsOpen(false)} style={{ display: "block", textAlign: "center", textDecoration: "none", backgroundColor: "#10b981", color: "#fff", padding: "0.5rem", borderRadius: "6px", fontSize: "0.85rem", fontWeight: "600" }}>
-                      Go to Project Page
-                    </a>
+
+                    <div style={{ marginBottom: "0.75rem" }}>
+                      <h4 style={{ fontSize: "0.75rem", fontWeight: "700", textTransform: "uppercase", color: "#8b949e", marginBottom: "0.35rem" }}>
+                        Your Skills Alignment:
+                      </h4>
+                      <div style={{ display: "flex", flexDirection: "column", gap: "0.2rem" }}>
+                        {skillMatches.map((skill) => (
+                          <div key={skill.name} style={{ display: "flex", alignItems: "center", gap: "0.4rem", fontSize: "0.8rem" }}>
+                            <span style={{ color: skill.matched ? "#10b981" : "#ff7b72", fontWeight: "bold" }}>
+                              {skill.matched ? "✓" : "✗"}
+                            </span>
+                            <span style={{ color: skill.matched ? "#f8fafc" : "#8b949e" }}>
+                              {skill.name}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.8rem", color: "#c9d1d9" }}>
+                      <span>Difficulty:</span>
+                      <span style={{ fontWeight: "700" }}>{p.difficulty}</span>
+                    </div>
                   </div>
-                ) : (
-                  <div style={{ fontSize: "0.85rem", color: "#ff7b72" }}>No match found. Please configure your skills in the preferences drawer.</div>
                 );
               })()}
-            </div>
-          )}
-
-          {/* 2. Recently Active Tool */}
-          {activeTool === "recently-active" && (
-            <div style={{ padding: "1.25rem", borderBottom: "1px solid #1e222b" }}>
-              <div style={{ fontSize: "1.05rem", fontWeight: "700", marginBottom: "0.5rem" }}>🟢 Recently Active</div>
-              <p style={{ fontSize: "0.85rem", color: "#94a3b8", marginBottom: "1rem" }}>Simulation of recent git activities:</p>
-              <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
-                {[
-                  { project: "Next.js", action: "Merged PR #6849: Fix hydration error in routing", time: "12m ago" },
-                  { project: "React", action: "Closed issue #28402: SyntheticEvent pooling cleanup", time: "1h ago" },
-                  { project: "Kubernetes", action: "Pushed 5 commits to main branch", time: "3h ago" },
-                  { project: "Flutter", action: "Released version 3.24.1 stable build", time: "5h ago" }
-                ].map((ev, i) => (
-                  <div key={i} style={{ borderBottom: "1px solid #1e222b", paddingBottom: "0.5rem" }}>
-                    <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.85rem", marginBottom: "2px" }}>
-                      <strong style={{ color: "#58a6ff" }}>{ev.project}</strong>
-                      <span style={{ fontSize: "0.75rem", color: "#8b949e" }}>{ev.time}</span>
-                    </div>
-                    <div style={{ fontSize: "0.8rem", color: "#c9d1d9" }}>{ev.action}</div>
-                  </div>
-                ))}
-              </div>
             </div>
           )}
 
@@ -463,15 +466,9 @@ export default function DevOverlayReplica() {
                       borderTop: "1px solid #30363d",
                       gap: "0.5rem"
                     }}>
-                      <button onClick={() => setActiveTool('find-project')} style={{ background: "none", border: "none", color: "#a855f7", textAlign: "left", cursor: "pointer", display: "flex", alignItems: "center", gap: "0.5rem", padding: "0.25rem 0", fontSize: "0.8rem", width: "100%" }}>
-                        <span>🎯</span> Find your next project
+                      <button onClick={() => setActiveTool('is-project-for-me')} style={{ background: "none", border: "none", color: "#a855f7", textAlign: "left", cursor: "pointer", display: "flex", alignItems: "center", gap: "0.5rem", padding: "0.25rem 0", fontSize: "0.8rem", width: "100%" }}>
+                        <span>🤔</span> Is this Project for me
                       </button>
-                      <a href="/projects?difficulty=Beginner" onClick={() => setIsOpen(false)} style={{ color: "#a855f7", textDecoration: "none", display: "flex", alignItems: "center", gap: "0.5rem", padding: "0.25rem 0", fontSize: "0.8rem" }}>
-                        <span>🤝</span> Find contribution opportunities
-                      </a>
-                      <a href="/projects?sort=stars" onClick={() => setIsOpen(false)} style={{ color: "#06b6d4", textDecoration: "none", display: "flex", alignItems: "center", gap: "0.5rem", padding: "0.25rem 0", fontSize: "0.8rem" }}>
-                        <span>🔥</span> Discover rising projects
-                      </a>
                       <button onClick={() => setActiveTool('compare')} style={{ background: "none", border: "none", color: "#06b6d4", textAlign: "left", cursor: "pointer", display: "flex", alignItems: "center", gap: "0.5rem", padding: "0.25rem 0", fontSize: "0.8rem", width: "100%" }}>
                         <span>⚔</span> Compare repositories
                       </button>
