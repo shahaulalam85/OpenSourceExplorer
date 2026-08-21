@@ -311,6 +311,72 @@ export default function DevOverlayReplica() {
             </div>
           )}
 
+          {/* Find your next project Tool */}
+          {activeTool === "find-project" && (
+            <div style={{ padding: "1.25rem", borderBottom: "1px solid #1e222b" }}>
+              <div style={{ fontSize: "1.05rem", fontWeight: "700", marginBottom: "0.5rem" }}>🎯 Find your next project</div>
+              <p style={{ fontSize: "0.85rem", color: "#94a3b8", marginBottom: "1rem" }}>
+                Scanning all repositories matching your stack: <strong>{userSkills.join(", ")}</strong>
+              </p>
+              {(() => {
+                let best = null;
+                let highest = 0;
+                projects.forEach((p) => {
+                  const matches = userSkills.filter(skill => 
+                    p.technologies.some(t => t.toLowerCase() === skill.toLowerCase()) ||
+                    p.language.toLowerCase() === skill.toLowerCase()
+                  ).length;
+                  const matchPct = userSkills.length ? Math.round(45 + (matches / userSkills.length) * 40 + 15) : 0;
+                  const finalPct = Math.min(matchPct, 100);
+                  if (finalPct > highest) {
+                    highest = finalPct;
+                    best = p;
+                  }
+                });
+                return best ? (
+                  <div style={{ backgroundColor: "#161b22", border: "1px solid #30363d", padding: "1rem", borderRadius: "8px" }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.5rem" }}>
+                      <span style={{ fontWeight: "600", fontSize: "0.95rem", color: "#10b981" }}>{best.name}</span>
+                      <span style={{ fontSize: "0.85rem", fontWeight: "700", color: "#10b981", backgroundColor: "rgba(16, 185, 129, 0.15)", padding: "2px 6px", borderRadius: "4px" }}>
+                        {highest}% Match
+                      </span>
+                    </div>
+                    <div style={{ fontSize: "0.8rem", color: "#8b949e", marginBottom: "0.75rem" }}>{best.description}</div>
+                    <a href={`/projects/${best.id}`} onClick={() => setIsOpen(false)} style={{ display: "block", textAlign: "center", textDecoration: "none", backgroundColor: "#10b981", color: "#fff", padding: "0.5rem", borderRadius: "6px", fontSize: "0.85rem", fontWeight: "600" }}>
+                      Go to Project Page
+                    </a>
+                  </div>
+                ) : (
+                  <div style={{ fontSize: "0.85rem", color: "#ff7b72" }}>No match found. Please configure your skills in the preferences drawer.</div>
+                );
+              })()}
+            </div>
+          )}
+
+          {/* Recently Active Tool */}
+          {activeTool === "recently-active" && (
+            <div style={{ padding: "1.25rem", borderBottom: "1px solid #1e222b" }}>
+              <div style={{ fontSize: "1.05rem", fontWeight: "700", marginBottom: "0.5rem" }}>🆕 Recently Active</div>
+              <p style={{ fontSize: "0.85rem", color: "#94a3b8", marginBottom: "1rem" }}>Simulation of recent git activities:</p>
+              <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+                {[
+                  { project: "Next.js", action: "Merged PR #6849: Fix hydration error in routing", time: "12m ago" },
+                  { project: "React", action: "Closed issue #28402: SyntheticEvent pooling cleanup", time: "1h ago" },
+                  { project: "Kubernetes", action: "Pushed 5 commits to main branch", time: "3h ago" },
+                  { project: "Flutter", action: "Released version 3.24.1 stable build", time: "5h ago" }
+                ].map((ev, i) => (
+                  <div key={i} style={{ borderBottom: "1px solid #1e222b", paddingBottom: "0.5rem" }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.85rem", marginBottom: "2px" }}>
+                      <strong style={{ color: "#58a6ff" }}>{ev.project}</strong>
+                      <span style={{ fontSize: "0.75rem", color: "#8b949e" }}>{ev.time}</span>
+                    </div>
+                    <div style={{ fontSize: "0.8rem", color: "#c9d1d9" }}>{ev.action}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* 3. Compare Projects Tool */}
           {activeTool === "compare" && (
             <div style={{ padding: "1.25rem", borderBottom: "1px solid #1e222b" }}>
@@ -511,6 +577,12 @@ export default function DevOverlayReplica() {
                       borderTop: "1px solid #30363d",
                       gap: "0.5rem"
                     }}>
+                      <button onClick={() => setActiveTool('find-project')} style={{ background: "none", border: "none", color: "#a855f7", textAlign: "left", cursor: "pointer", display: "flex", alignItems: "center", gap: "0.5rem", padding: "0.25rem 0", fontSize: "0.8rem", width: "100%" }}>
+                        <span>🎯</span> Find your next project
+                      </button>
+                      <button onClick={() => setActiveTool('recently-active')} style={{ background: "none", border: "none", color: "#a855f7", textAlign: "left", cursor: "pointer", display: "flex", alignItems: "center", gap: "0.5rem", padding: "0.25rem 0", fontSize: "0.8rem", width: "100%" }}>
+                        <span>🆕</span> Recently Active
+                      </button>
                       <button onClick={() => setActiveTool('is-project-for-me')} style={{ background: "none", border: "none", color: "#a855f7", textAlign: "left", cursor: "pointer", display: "flex", alignItems: "center", gap: "0.5rem", padding: "0.25rem 0", fontSize: "0.8rem", width: "100%" }}>
                         <span>🤔</span> Is this Project for me
                       </button>
