@@ -577,9 +577,6 @@ export default function DevOverlayReplica() {
                       borderTop: "1px solid #30363d",
                       gap: "0.5rem"
                     }}>
-                      <button onClick={() => setActiveTool('find-project')} style={{ background: "none", border: "none", color: "#a855f7", textAlign: "left", cursor: "pointer", display: "flex", alignItems: "center", gap: "0.5rem", padding: "0.25rem 0", fontSize: "0.8rem", width: "100%" }}>
-                        <span>🎯</span> Find your next project
-                      </button>
                       <button onClick={() => setActiveTool('recently-active')} style={{ background: "none", border: "none", color: "#a855f7", textAlign: "left", cursor: "pointer", display: "flex", alignItems: "center", gap: "0.5rem", padding: "0.25rem 0", fontSize: "0.8rem", width: "100%" }}>
                         <span>🆕</span> Recently Active
                       </button>
