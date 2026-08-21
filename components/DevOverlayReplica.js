@@ -92,17 +92,13 @@ export default function DevOverlayReplica() {
             overflow: "hidden"
           }}
         >
-          {/* Header */}
           <div style={{
             display: "flex",
-            justifyContent: "space-between",
+            justifyContent: "flex-end",
             alignItems: "center",
             padding: "1rem 1.25rem",
             borderBottom: "1px solid #1e222b"
           }}>
-            <span style={{ fontSize: "1.05rem", fontWeight: "600", letterSpacing: "-0.01em" }}>
-              Preferences
-            </span>
             <button
               onClick={() => setIsOpen(false)}
               style={{

@@ -4,6 +4,33 @@ import { useEffect } from "react";
 
 export default function ThemeSync() {
   useEffect(() => {
+    // Helper to hide bottom-right floating widgets (e.g. IDE preview brain widget)
+    const hideFloatingWidgets = () => {
+      const all = document.querySelectorAll("body > *, html > *");
+      all.forEach((el) => {
+        if (el.tagName.toLowerCase() === "nextjs-portal") return;
+        
+        const style = window.getComputedStyle(el);
+        if (style.position === "fixed" || style.position === "absolute") {
+          const bottom = parseFloat(style.bottom);
+          const right = parseFloat(style.right);
+          if (!isNaN(bottom) && !isNaN(right) && bottom < 120 && right < 120) {
+            const width = parseFloat(style.width);
+            if ((!isNaN(width) && width < 150) || el.tagName.toLowerCase() === "iframe" || el.id.includes("antigravity") || el.tagName.toLowerCase().includes("antigravity")) {
+              el.style.setProperty("display", "none", "important");
+            }
+          }
+        }
+      });
+    };
+
+    hideFloatingWidgets();
+    const widgetObserver = new MutationObserver(hideFloatingWidgets);
+    widgetObserver.observe(document.documentElement, {
+      childList: true,
+      subtree: true
+    });
+
     // Helper to hide non-preference rows and options in Next.js Dev Overlay
     const cleanDevOverlay = (shadowRoot) => {
       if (!shadowRoot) return;
@@ -46,8 +73,6 @@ export default function ThemeSync() {
           while (current && current.parentElement) {
             const parentText = current.parentElement.textContent || "";
             const currentText = current.textContent || "";
-            // Find the option container row: it is a child of the container holding "Theme", 
-            // but is not the "Theme" container itself
             if (parentText.includes("Theme") && !currentText.includes("Theme")) {
               nodesToHide.push(current);
               break;
@@ -84,7 +109,6 @@ export default function ThemeSync() {
     const setupPortalObservers = (p) => {
       if (!p) return;
       
-      // Theme syncing
       syncTheme(p);
       if (observer) observer.disconnect();
       observer = new MutationObserver(() => syncTheme(p));
@@ -93,7 +117,6 @@ export default function ThemeSync() {
         attributeFilter: ["class"]
       });
 
-      // Dev overlay cleaning
       if (p.shadowRoot) {
         cleanDevOverlay(p.shadowRoot);
         if (overlayObserver) overlayObserver.disconnect();
@@ -109,7 +132,6 @@ export default function ThemeSync() {
       setupPortalObservers(portal);
     }
 
-    // Observe document root to capture when nextjs-portal is dynamically attached
     const docObserver = new MutationObserver(() => {
       const foundPortal = document.querySelector("nextjs-portal");
       if (foundPortal && foundPortal !== portal) {
@@ -127,6 +149,7 @@ export default function ThemeSync() {
       if (observer) observer.disconnect();
       if (overlayObserver) overlayObserver.disconnect();
       docObserver.disconnect();
+      widgetObserver.disconnect();
     };
   }, []);
 
