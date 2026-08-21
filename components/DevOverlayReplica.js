@@ -17,8 +17,7 @@ export default function DevOverlayReplica() {
   const [explainAnswer, setExplainAnswer] = useState("");
   const [selectedSumProj, setSelectedSumProj] = useState(1);
   const [expandedFolders, setExpandedFolders] = useState({
-    saved: false,
-    explore: false,
+    toolkit: true,
     ai: true
   });
 
@@ -267,7 +266,7 @@ export default function DevOverlayReplica() {
           {/* 3. Compare Projects Tool */}
           {activeTool === "compare" && (
             <div style={{ padding: "1.25rem", borderBottom: "1px solid #1e222b" }}>
-              <div style={{ fontSize: "1.05rem", fontWeight: "700", marginBottom: "0.5rem" }}>⨉ Compare Projects</div>
+              <div style={{ fontSize: "1.05rem", fontWeight: "700", marginBottom: "0.5rem" }}>⚔ Compare Repositories</div>
               <div style={{ display: "flex", gap: "0.5rem", marginBottom: "1rem" }}>
                 <div style={{ flex: 1 }}>
                   <label style={{ fontSize: "0.75rem", color: "#8b949e", display: "block", marginBottom: "4px" }}>Project A</label>
@@ -422,11 +421,64 @@ export default function DevOverlayReplica() {
           {activeTool === null && (
             <div style={{ padding: "1.25rem", borderBottom: "1px solid #1e222b", maxHeight: "380px", overflowY: "auto" }}>
               <div style={{ fontSize: "0.95rem", fontWeight: "600", marginBottom: "1rem", color: "#10b981", display: "flex", alignItems: "center", gap: "0.4rem" }}>
-                <span>🤖</span> AI Assistant & Tools
+                <span>🛠️</span> DevTools Explorer & Toolkit
               </div>
               
               <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
                 
+                {/* Developer Toolkit Dropdown Accordion */}
+                <div style={{
+                  backgroundColor: "#161b22",
+                  border: "1px solid #30363d",
+                  borderRadius: "8px",
+                  overflow: "hidden"
+                }}>
+                  <button onClick={() => toggleFolder('toolkit')} style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    width: "100%",
+                    background: "none",
+                    border: "none",
+                    color: "#f8fafc",
+                    padding: "0.6rem 0.75rem",
+                    fontSize: "0.85rem",
+                    fontWeight: "500",
+                    cursor: "pointer",
+                    textAlign: "left"
+                  }}>
+                    <span style={{ display: "flex", alignItems: "center", gap: "0.6rem" }}>
+                      <span>🛠️</span> Developer Toolkit
+                    </span>
+                    <span style={{ color: "#8b949e", fontSize: "0.75rem" }}>
+                      {expandedFolders.toolkit ? "▲" : "▼"}
+                    </span>
+                  </button>
+                  {expandedFolders.toolkit && (
+                    <div style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      backgroundColor: "#0d1117",
+                      padding: "0.5rem 0.75rem",
+                      borderTop: "1px solid #30363d",
+                      gap: "0.5rem"
+                    }}>
+                      <button onClick={() => setActiveTool('find-project')} style={{ background: "none", border: "none", color: "#a855f7", textAlign: "left", cursor: "pointer", display: "flex", alignItems: "center", gap: "0.5rem", padding: "0.25rem 0", fontSize: "0.8rem", width: "100%" }}>
+                        <span>🎯</span> Find your next project
+                      </button>
+                      <a href="/projects?difficulty=Beginner" onClick={() => setIsOpen(false)} style={{ color: "#a855f7", textDecoration: "none", display: "flex", alignItems: "center", gap: "0.5rem", padding: "0.25rem 0", fontSize: "0.8rem" }}>
+                        <span>🤝</span> Find contribution opportunities
+                      </a>
+                      <a href="/projects?sort=stars" onClick={() => setIsOpen(false)} style={{ color: "#06b6d4", textDecoration: "none", display: "flex", alignItems: "center", gap: "0.5rem", padding: "0.25rem 0", fontSize: "0.8rem" }}>
+                        <span>🔥</span> Discover rising projects
+                      </a>
+                      <button onClick={() => setActiveTool('compare')} style={{ background: "none", border: "none", color: "#06b6d4", textAlign: "left", cursor: "pointer", display: "flex", alignItems: "center", gap: "0.5rem", padding: "0.25rem 0", fontSize: "0.8rem", width: "100%" }}>
+                        <span>⚔</span> Compare repositories
+                      </button>
+                    </div>
+                  )}
+                </div>
+
                 {/* AI Assistant Dropdown Accordion */}
                 <div style={{
                   backgroundColor: "#161b22",
@@ -464,13 +516,13 @@ export default function DevOverlayReplica() {
                       borderTop: "1px solid #30363d",
                       gap: "0.5rem"
                     }}>
-                      <button onClick={() => setActiveTool('ai-explain')} style={{ background: "none", border: "none", color: "#3b82f6", textAlign: "left", cursor: "pointer", display: "flex", alignItems: "center", gap: "0.5rem", padding: "0.25rem 0", fontSize: "0.8rem" }}>
+                      <button onClick={() => setActiveTool('ai-explain')} style={{ background: "none", border: "none", color: "#3b82f6", textAlign: "left", cursor: "pointer", display: "flex", alignItems: "center", gap: "0.5rem", padding: "0.25rem 0", fontSize: "0.8rem", width: "100%" }}>
                         <span>📝</span> Explain Repository
                       </button>
-                      <button onClick={() => setActiveTool('ai-recommend')} style={{ background: "none", border: "none", color: "#3b82f6", textAlign: "left", cursor: "pointer", display: "flex", alignItems: "center", gap: "0.5rem", padding: "0.25rem 0", fontSize: "0.8rem" }}>
+                      <button onClick={() => setActiveTool('ai-recommend')} style={{ background: "none", border: "none", color: "#3b82f6", textAlign: "left", cursor: "pointer", display: "flex", alignItems: "center", gap: "0.5rem", padding: "0.25rem 0", fontSize: "0.8rem", width: "100%" }}>
                         <span>💡</span> Recommend Projects
                       </button>
-                      <button onClick={() => setActiveTool('ai-summarize')} style={{ background: "none", border: "none", color: "#3b82f6", textAlign: "left", cursor: "pointer", display: "flex", alignItems: "center", gap: "0.5rem", padding: "0.25rem 0", fontSize: "0.8rem" }}>
+                      <button onClick={() => setActiveTool('ai-summarize')} style={{ background: "none", border: "none", color: "#3b82f6", textAlign: "left", cursor: "pointer", display: "flex", alignItems: "center", gap: "0.5rem", padding: "0.25rem 0", fontSize: "0.8rem", width: "100%" }}>
                         <span>📊</span> Summarize Repository
                       </button>
                     </div>
