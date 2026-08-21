@@ -90,6 +90,27 @@ function getMockTechStack(project) {
   return stack.sort((a, b) => b.percentage - a.percentage);
 }
 
+function getMockActivity(project) {
+  const seed = project.id;
+  const isActive = project.stars > 50000 && project.issues > 300;
+  
+  const commits = Math.min(Math.round((project.stars / 1000) * 1.5 + (seed % 10)), 100);
+  const prs = Math.min(Math.round(commits * 0.65 + (seed % 5)), 100);
+  const issues = Math.min(Math.round(project.issues / 20 + (seed % 15)), 100);
+  const releases = Math.min(Math.round((project.stars / 20000) + (seed % 4) + 1), 20);
+
+  return {
+    isActive,
+    commits,
+    prs,
+    issues,
+    releases,
+    mostActive: isActive ? "Last 7 days" : "Last 90 days",
+    trend: isActive ? "↗ Increasing activity" : "Project appears inactive",
+    trendColor: isActive ? "#10b981" : "#8b949e"
+  };
+}
+
 export default async function ProjectDetailPage({ params }) {
   const resolvedParams = await params;
   const project = getProject(resolvedParams.id);
@@ -99,6 +120,7 @@ export default async function ProjectDetailPage({ params }) {
   }
 
   const techStack = getMockTechStack(project);
+  const activity = getMockActivity(project);
 
   const {
     id,
@@ -230,6 +252,85 @@ export default async function ProjectDetailPage({ params }) {
               ))}
             </div>
           </section>
+          {/* Technology Stack Breakdown */}
+          <section className="detail-tech-card" style={{ marginTop: "1.5rem" }}>
+            <h2 className="detail-description-title">
+              <svg
+                viewBox="0 0 24 24"
+                width="18"
+                height="18"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                fill="none"
+                style={{ color: "var(--primary)" }}
+              >
+                <line x1="18" y1="20" x2="18" y2="10" />
+                <line x1="12" y1="20" x2="12" y2="4" />
+                <line x1="6" y1="20" x2="6" y2="14" />
+              </svg>
+              Technology Stack Breakdown
+            </h2>
+            
+            {/* Visual colored bar representing percentages */}
+            <div style={{
+              display: "flex",
+              height: "10px",
+              borderRadius: "5px",
+              overflow: "hidden",
+              marginBottom: "1.25rem",
+              backgroundColor: "#21262d",
+              marginTop: "1.25rem"
+            }}>
+              {techStack.map((item) => (
+                <div
+                  key={item.name}
+                  style={{
+                    width: `${item.percentage}%`,
+                    backgroundColor: item.color,
+                    height: "100%"
+                  }}
+                  title={`${item.name}: ${item.percentage}%`}
+                />
+              ))}
+            </div>
+
+            <div style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))",
+              gap: "0.8rem"
+            }}>
+              {techStack.map((item) => (
+                <div
+                  key={item.name}
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    fontSize: "0.85rem",
+                    color: "var(--text-secondary)",
+                    backgroundColor: "rgba(22, 27, 34, 0.5)",
+                    padding: "0.6rem 0.8rem",
+                    borderRadius: "8px",
+                    border: "1px solid #21262d"
+                  }}
+                >
+                  <span style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                    <span style={{
+                      width: "10px",
+                      height: "10px",
+                      borderRadius: "50%",
+                      backgroundColor: item.color,
+                      display: "inline-block",
+                      flexShrink: 0
+                    }} />
+                    <span>{item.emoji}</span>
+                    <span style={{ fontWeight: "500", color: "var(--text-primary)" }}>{item.name}</span>
+                  </span>
+                  <span style={{ fontWeight: "600", color: "var(--primary)" }}>{item.percentage}%</span>
+                </div>
+              ))}
+            </div>
+          </section>
         </div>
 
         {/* Sidebar Column */}
@@ -277,53 +378,68 @@ export default async function ProjectDetailPage({ params }) {
             </div>
           </div>
 
-          {/* Technology Stack Card */}
+
+          {/* Repository Activity Card */}
           <div className="sidebar-card" style={{ marginTop: "1.5rem" }}>
             <h3 style={{ fontSize: "1.1rem", marginBottom: "1rem" }}>
-              Technology Stack
+              📈 Repository Activity
             </h3>
             
-            {/* Visual colored bar representing percentages */}
-            <div style={{
-              display: "flex",
-              height: "8px",
-              borderRadius: "4px",
-              overflow: "hidden",
-              marginBottom: "1.25rem",
-              backgroundColor: "#21262d"
-            }}>
-              {techStack.map((item) => (
-                <div
-                  key={item.name}
-                  style={{
-                    width: `${item.percentage}%`,
-                    backgroundColor: item.color,
-                    height: "100%"
-                  }}
-                  title={`${item.name}: ${item.percentage}%`}
-                />
-              ))}
+            <div style={{ display: "flex", flexDirection: "column", gap: "0.8rem", marginBottom: "1.25rem" }}>
+              {/* Commits */}
+              <div>
+                <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.8rem", color: "var(--text-secondary)", marginBottom: "4px" }}>
+                  <span>Commits</span>
+                  <span style={{ fontWeight: "600", color: "var(--text-primary)" }}>{activity.commits}</span>
+                </div>
+                <div style={{ height: "6px", backgroundColor: "#21262d", borderRadius: "3px", overflow: "hidden" }}>
+                  <div style={{ width: `${activity.commits}%`, backgroundColor: "#3b82f6", height: "100%", borderRadius: "3px" }} />
+                </div>
+              </div>
+
+              {/* PRs */}
+              <div>
+                <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.8rem", color: "var(--text-secondary)", marginBottom: "4px" }}>
+                  <span>PRs</span>
+                  <span style={{ fontWeight: "600", color: "var(--text-primary)" }}>{activity.prs}</span>
+                </div>
+                <div style={{ height: "6px", backgroundColor: "#21262d", borderRadius: "3px", overflow: "hidden" }}>
+                  <div style={{ width: `${activity.prs}%`, backgroundColor: "#a855f7", height: "100%", borderRadius: "3px" }} />
+                </div>
+              </div>
+
+              {/* Issues */}
+              <div>
+                <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.8rem", color: "var(--text-secondary)", marginBottom: "4px" }}>
+                  <span>Issues Resolved</span>
+                  <span style={{ fontWeight: "600", color: "var(--text-primary)" }}>{activity.issues}</span>
+                </div>
+                <div style={{ height: "6px", backgroundColor: "#21262d", borderRadius: "3px", overflow: "hidden" }}>
+                  <div style={{ width: `${activity.issues}%`, backgroundColor: "#eab308", height: "100%", borderRadius: "3px" }} />
+                </div>
+              </div>
+
+              {/* Releases */}
+              <div>
+                <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.8rem", color: "var(--text-secondary)", marginBottom: "4px" }}>
+                  <span>Releases</span>
+                  <span style={{ fontWeight: "600", color: "var(--text-primary)" }}>{activity.releases}</span>
+                </div>
+                <div style={{ height: "6px", backgroundColor: "#21262d", borderRadius: "3px", overflow: "hidden" }}>
+                  <div style={{ width: `${(activity.releases / 20) * 100}%`, backgroundColor: "#10b981", height: "100%", borderRadius: "3px" }} />
+                </div>
+              </div>
             </div>
 
-            <div style={{ display: "flex", flexDirection: "column", gap: "0.6rem" }}>
-              {techStack.map((item) => (
-                <div
-                  key={item.name}
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    fontSize: "0.85rem",
-                    color: "var(--text-secondary)"
-                  }}
-                >
-                  <span style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                    <span>{item.emoji}</span>
-                    <span style={{ fontWeight: "500", color: "var(--text-primary)" }}>{item.name}</span>
-                  </span>
-                  <span style={{ fontWeight: "600" }}>{item.percentage}%</span>
-                </div>
-              ))}
+            <div style={{ borderTop: "1px solid #21262d", paddingTop: "0.75rem", fontSize: "0.8rem" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "0.4rem" }}>
+                <span style={{ color: "var(--text-secondary)" }}>Most active:</span>
+                <span style={{ fontWeight: "600", color: "var(--text-primary)" }}>{activity.mostActive}</span>
+              </div>
+              <div style={{ display: "flex", justifyContent: "space-between" }}>
+                <span style={{ color: "var(--text-secondary)" }}>Trend:</span>
+                <span style={{ fontWeight: "700", color: activity.trendColor }}>{activity.trend}</span>
+              </div>
             </div>
           </div>
         </aside>
