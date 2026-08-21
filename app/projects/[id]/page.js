@@ -2,7 +2,6 @@ import { getProject, projects, formatStars } from "@/lib/projects";
 import BookmarkButton from "@/components/BookmarkButton";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import RepositoryMatch from "@/components/RepositoryMatch";
 
 export async function generateStaticParams() {
   return projects.map((p) => ({
@@ -152,7 +151,6 @@ export default async function ProjectDetailPage({ params }) {
 
         {/* Sidebar Column */}
         <aside className="detail-sidebar">
-          <RepositoryMatch project={project} />
 
           <div className="sidebar-card">
             <h3 style={{ fontSize: "1.1rem", marginBottom: "1.25rem" }}>

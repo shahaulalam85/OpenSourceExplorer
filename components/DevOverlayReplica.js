@@ -16,6 +16,18 @@ export default function DevOverlayReplica() {
   const [selectedExplainProj, setSelectedExplainProj] = useState(1);
   const [explainAnswer, setExplainAnswer] = useState("");
   const [selectedSumProj, setSelectedSumProj] = useState(1);
+  const [expandedFolders, setExpandedFolders] = useState({
+    saved: false,
+    explore: false,
+    ai: false
+  });
+
+  const toggleFolder = (folder) => {
+    setExpandedFolders(prev => ({
+      ...prev,
+      [folder]: !prev[folder]
+    }));
+  };
 
   useEffect(() => {
     // Render the mock indicator in both development and production for testing
@@ -408,79 +420,199 @@ export default function DevOverlayReplica() {
 
           {/* Main Sitemap Tree View */}
           {activeTool === null && (
-            <div style={{ padding: "1.25rem", borderBottom: "1px solid #1e222b", maxHeight: "350px", overflowY: "auto" }}>
-              <div style={{ fontSize: "0.95rem", fontWeight: "600", marginBottom: "0.75rem", color: "#10b981" }}>
-                🌳 App Sitemap & Toolkit
+            <div style={{ padding: "1.25rem", borderBottom: "1px solid #1e222b", maxHeight: "380px", overflowY: "auto" }}>
+              <div style={{ fontSize: "0.95rem", fontWeight: "600", marginBottom: "1rem", color: "#10b981", display: "flex", alignItems: "center", gap: "0.4rem" }}>
+                <span>🌳</span> App Sitemap & Tools
               </div>
-              <div style={{ fontSize: "0.85rem", color: "#cbd5e1" }}>
-                <div style={{ fontWeight: "700", marginBottom: "0.4rem", display: "flex", alignItems: "center", gap: "0.3rem" }}>
-                  <span>👤</span> User
-                </div>
+              
+              <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
                 
-                <div style={{ paddingLeft: "1.25rem", borderLeft: "1px solid #2d3139", display: "flex", flexDirection: "column", gap: "0.5rem" }}>
-                  
-                  {/* Home */}
-                  <a href="/" onClick={() => setIsOpen(false)} style={{ color: "#f8fafc", textDecoration: "none", display: "flex", alignItems: "center", gap: "0.4rem" }}>
-                    <span>🏠</span> Home
-                  </a>
-                  
-                  {/* Projects */}
-                  <a href="/projects" onClick={() => setIsOpen(false)} style={{ color: "#f8fafc", textDecoration: "none", display: "flex", alignItems: "center", gap: "0.4rem" }}>
-                    <span>📚</span> Projects
-                  </a>
-                  
-                  {/* Saved Projects */}
-                  <div>
-                    <a href="/saved" onClick={() => setIsOpen(false)} style={{ color: "#f8fafc", textDecoration: "none", display: "flex", alignItems: "center", gap: "0.4rem" }}>
+                {/* Home Link */}
+                <a href="/" onClick={() => setIsOpen(false)} style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "0.6rem",
+                  color: "#f8fafc",
+                  textDecoration: "none",
+                  backgroundColor: "#161b22",
+                  border: "1px solid #30363d",
+                  padding: "0.6rem 0.75rem",
+                  borderRadius: "8px",
+                  fontSize: "0.85rem",
+                  fontWeight: "500",
+                  transition: "background-color 0.2s"
+                }}>
+                  <span>🏠</span> Home Page
+                </a>
+
+                {/* Projects Link */}
+                <a href="/projects" onClick={() => setIsOpen(false)} style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "0.6rem",
+                  color: "#f8fafc",
+                  textDecoration: "none",
+                  backgroundColor: "#161b22",
+                  border: "1px solid #30363d",
+                  padding: "0.6rem 0.75rem",
+                  borderRadius: "8px",
+                  fontSize: "0.85rem",
+                  fontWeight: "500",
+                  transition: "background-color 0.2s"
+                }}>
+                  <span>📚</span> Projects Catalog
+                </a>
+
+                {/* Saved Projects Dropdown Accordion */}
+                <div style={{
+                  backgroundColor: "#161b22",
+                  border: "1px solid #30363d",
+                  borderRadius: "8px",
+                  overflow: "hidden"
+                }}>
+                  <button onClick={() => toggleFolder('saved')} style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    width: "100%",
+                    background: "none",
+                    border: "none",
+                    color: "#f8fafc",
+                    padding: "0.6rem 0.75rem",
+                    fontSize: "0.85rem",
+                    fontWeight: "500",
+                    cursor: "pointer",
+                    textAlign: "left"
+                  }}>
+                    <span style={{ display: "flex", alignItems: "center", gap: "0.6rem" }}>
                       <span>💾</span> Saved Projects
-                    </a>
-                    <div style={{ paddingLeft: "1.25rem", borderLeft: "1px solid #2d3139", marginTop: "0.25rem", display: "flex", flexDirection: "column", gap: "0.4rem" }}>
-                      <button onClick={() => setActiveTool('find-project')} style={{ background: "none", border: "none", color: "#a855f7", textAlign: "left", cursor: "pointer", display: "flex", alignItems: "center", gap: "0.4rem", padding: 0, fontSize: "inherit" }}>
-                        <span>🎯</span> Find My Project
+                    </span>
+                    <span style={{ color: "#8b949e", fontSize: "0.75rem" }}>
+                      {expandedFolders.saved ? "▲" : "▼"}
+                    </span>
+                  </button>
+                  {expandedFolders.saved && (
+                    <div style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      backgroundColor: "#0d1117",
+                      padding: "0.5rem 0.75rem",
+                      borderTop: "1px solid #30363d",
+                      gap: "0.5rem"
+                    }}>
+                      <a href="/saved" onClick={() => setIsOpen(false)} style={{ color: "#a855f7", textDecoration: "none", display: "flex", alignItems: "center", gap: "0.5rem", padding: "0.25rem 0", fontSize: "0.8rem" }}>
+                        <span>📋</span> View Saved List
+                      </a>
+                      <button onClick={() => setActiveTool('find-project')} style={{ background: "none", border: "none", color: "#a855f7", textAlign: "left", cursor: "pointer", display: "flex", alignItems: "center", gap: "0.5rem", padding: "0.25rem 0", fontSize: "0.8rem" }}>
+                        <span>🎯</span> Find My Project Tool
                       </button>
-                      <a href="/projects?difficulty=Beginner" onClick={() => setIsOpen(false)} style={{ color: "#a855f7", textDecoration: "none", display: "flex", alignItems: "center", gap: "0.4rem" }}>
+                      <a href="/projects?difficulty=Beginner" onClick={() => setIsOpen(false)} style={{ color: "#a855f7", textDecoration: "none", display: "flex", alignItems: "center", gap: "0.5rem", padding: "0.25rem 0", fontSize: "0.8rem" }}>
                         <span>🤝</span> Good First Issues
                       </a>
                     </div>
-                  </div>
-                  
-                  {/* N Quick Explore */}
-                  <div>
-                    <div style={{ color: "#f8fafc", display: "flex", alignItems: "center", gap: "0.4rem" }}>
-                      <span>🔍</span> N Quick Explore
-                    </div>
-                    <div style={{ paddingLeft: "1.25rem", borderLeft: "1px solid #2d3139", marginTop: "0.25rem", display: "flex", flexDirection: "column", gap: "0.4rem" }}>
-                      <a href="/projects?sort=stars" onClick={() => setIsOpen(false)} style={{ color: "#06b6d4", textDecoration: "none", display: "flex", alignItems: "center", gap: "0.4rem" }}>
+                  )}
+                </div>
+
+                {/* N Quick Explore Dropdown Accordion */}
+                <div style={{
+                  backgroundColor: "#161b22",
+                  border: "1px solid #30363d",
+                  borderRadius: "8px",
+                  overflow: "hidden"
+                }}>
+                  <button onClick={() => toggleFolder('explore')} style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    width: "100%",
+                    background: "none",
+                    border: "none",
+                    color: "#f8fafc",
+                    padding: "0.6rem 0.75rem",
+                    fontSize: "0.85rem",
+                    fontWeight: "500",
+                    cursor: "pointer",
+                    textAlign: "left"
+                  }}>
+                    <span style={{ display: "flex", alignItems: "center", gap: "0.6rem" }}>
+                      <span>🔍</span> Quick Explore
+                    </span>
+                    <span style={{ color: "#8b949e", fontSize: "0.75rem" }}>
+                      {expandedFolders.explore ? "▲" : "▼"}
+                    </span>
+                  </button>
+                  {expandedFolders.explore && (
+                    <div style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      backgroundColor: "#0d1117",
+                      padding: "0.5rem 0.75rem",
+                      borderTop: "1px solid #30363d",
+                      gap: "0.5rem"
+                    }}>
+                      <a href="/projects?sort=stars" onClick={() => setIsOpen(false)} style={{ color: "#06b6d4", textDecoration: "none", display: "flex", alignItems: "center", gap: "0.5rem", padding: "0.25rem 0", fontSize: "0.8rem" }}>
                         <span>🔥</span> Rising Projects
                       </a>
-                      <button onClick={() => setActiveTool('recently-active')} style={{ background: "none", border: "none", color: "#06b6d4", textAlign: "left", cursor: "pointer", display: "flex", alignItems: "center", gap: "0.4rem", padding: 0, fontSize: "inherit" }}>
+                      <button onClick={() => setActiveTool('recently-active')} style={{ background: "none", border: "none", color: "#06b6d4", textAlign: "left", cursor: "pointer", display: "flex", alignItems: "center", gap: "0.5rem", padding: "0.25rem 0", fontSize: "0.8rem" }}>
                         <span>🟢</span> Recently Active
                       </button>
-                      <button onClick={() => setActiveTool('compare')} style={{ background: "none", border: "none", color: "#06b6d4", textAlign: "left", cursor: "pointer", display: "flex", alignItems: "center", gap: "0.4rem", padding: 0, fontSize: "inherit" }}>
+                      <button onClick={() => setActiveTool('compare')} style={{ background: "none", border: "none", color: "#06b6d4", textAlign: "left", cursor: "pointer", display: "flex", alignItems: "center", gap: "0.5rem", padding: "0.25rem 0", fontSize: "0.8rem" }}>
                         <span>⨉</span> Compare Projects
                       </button>
                     </div>
-                  </div>
+                  )}
+                </div>
 
-                  {/* AI Assistant */}
-                  <div>
-                    <div style={{ color: "#f8fafc", display: "flex", alignItems: "center", gap: "0.4rem" }}>
+                {/* AI Assistant Dropdown Accordion */}
+                <div style={{
+                  backgroundColor: "#161b22",
+                  border: "1px solid #30363d",
+                  borderRadius: "8px",
+                  overflow: "hidden"
+                }}>
+                  <button onClick={() => toggleFolder('ai')} style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    width: "100%",
+                    background: "none",
+                    border: "none",
+                    color: "#f8fafc",
+                    padding: "0.6rem 0.75rem",
+                    fontSize: "0.85rem",
+                    fontWeight: "500",
+                    cursor: "pointer",
+                    textAlign: "left"
+                  }}>
+                    <span style={{ display: "flex", alignItems: "center", gap: "0.6rem" }}>
                       <span>🤖</span> AI Assistant
-                    </div>
-                    <div style={{ paddingLeft: "1.25rem", borderLeft: "1px solid #2d3139", marginTop: "0.25rem", display: "flex", flexDirection: "column", gap: "0.4rem" }}>
-                      <button onClick={() => setActiveTool('ai-explain')} style={{ background: "none", border: "none", color: "#3b82f6", textAlign: "left", cursor: "pointer", display: "flex", alignItems: "center", gap: "0.4rem", padding: 0, fontSize: "inherit" }}>
+                    </span>
+                    <span style={{ color: "#8b949e", fontSize: "0.75rem" }}>
+                      {expandedFolders.ai ? "▲" : "▼"}
+                    </span>
+                  </button>
+                  {expandedFolders.ai && (
+                    <div style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      backgroundColor: "#0d1117",
+                      padding: "0.5rem 0.75rem",
+                      borderTop: "1px solid #30363d",
+                      gap: "0.5rem"
+                    }}>
+                      <button onClick={() => setActiveTool('ai-explain')} style={{ background: "none", border: "none", color: "#3b82f6", textAlign: "left", cursor: "pointer", display: "flex", alignItems: "center", gap: "0.5rem", padding: "0.25rem 0", fontSize: "0.8rem" }}>
                         <span>📝</span> Explain Repository
                       </button>
-                      <button onClick={() => setActiveTool('ai-recommend')} style={{ background: "none", border: "none", color: "#3b82f6", textAlign: "left", cursor: "pointer", display: "flex", alignItems: "center", gap: "0.4rem", padding: 0, fontSize: "inherit" }}>
+                      <button onClick={() => setActiveTool('ai-recommend')} style={{ background: "none", border: "none", color: "#3b82f6", textAlign: "left", cursor: "pointer", display: "flex", alignItems: "center", gap: "0.5rem", padding: "0.25rem 0", fontSize: "0.8rem" }}>
                         <span>💡</span> Recommend Projects
                       </button>
-                      <button onClick={() => setActiveTool('ai-summarize')} style={{ background: "none", border: "none", color: "#3b82f6", textAlign: "left", cursor: "pointer", display: "flex", alignItems: "center", gap: "0.4rem", padding: 0, fontSize: "inherit" }}>
+                      <button onClick={() => setActiveTool('ai-summarize')} style={{ background: "none", border: "none", color: "#3b82f6", textAlign: "left", cursor: "pointer", display: "flex", alignItems: "center", gap: "0.5rem", padding: "0.25rem 0", fontSize: "0.8rem" }}>
                         <span>📊</span> Summarize Repository
                       </button>
                     </div>
-                  </div>
-
+                  )}
                 </div>
+
               </div>
             </div>
           )}
