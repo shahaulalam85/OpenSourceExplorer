@@ -360,8 +360,8 @@ export default function DevOverlayReplica() {
           animation: "fade-in 0.2s ease-out"
         }}>
           <div style={{
-            width: "480px",
-            maxWidth: "92vw",
+            width: "680px",
+            maxWidth: "94vw",
             backgroundColor: "#0d0f12",
             border: "1px solid #2d3139",
             borderRadius: "12px",
@@ -414,7 +414,7 @@ export default function DevOverlayReplica() {
             </div>
 
             {/* Pop-up Body / Tool Content */}
-            <div style={{ padding: "0.5rem", maxHeight: "70vh", overflowY: "auto" }}>
+            <div style={{ padding: "0.5rem", maxHeight: "80vh", overflowY: "auto" }}>
               {/* 1. Is This Project For Me Tool */}
               {activeTool === "is-project-for-me" && (
                 <div style={{ padding: "1.25rem" }}>
