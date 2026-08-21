@@ -157,6 +157,7 @@ export default function DevOverlayReplica() {
                   <option value="cyberpunk">Cyberpunk</option>
                   <option value="oceanic">Oceanic</option>
                   <option value="light">Light</option>
+                  <option value="dark">Dark</option>
                 </select>
                 <div style={{
                   position: "absolute",

@@ -265,6 +265,17 @@ export default function Navbar() {
                 </div>
                 <span className="theme-opt-name">Minimalist Light</span>
               </button>
+
+              <button
+                onClick={() => handleThemeChange("dark")}
+                className={`theme-opt-btn ${theme === "dark" ? "active" : ""}`}
+              >
+                <div className="theme-opt-color-dots">
+                  <div className="theme-dot" style={{ backgroundColor: "#10b981" }}></div>
+                  <div className="theme-dot" style={{ backgroundColor: "#0b0f19" }}></div>
+                </div>
+                <span className="theme-opt-name">Classic Dark</span>
+              </button>
             </div>
           </div>
 
